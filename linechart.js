@@ -67,22 +67,14 @@ function createLineChart(data){
         return line(values);
     }) //todo very poor mouse over interaction
     .on("mouseover", function(event, d) {
-        d3.select(this)
-        .attr("stroke-width", 3);
-        svg.append("text")
-        .attr("class", "title-text")
-        .style("fill", color(d["Country Name"]))
-        .text(d["Country Name"])
-        .attr("x", 700)
-        .attr("y", yScale(d[2020]));
+        d3.select(this).style("cursor", "pointer").style("stroke-width", 3);
 
     })
-    .on("mouseout", function(event, d) {
-        d3.select(this)
-        .attr("stroke-width", 1.5);
-        svg.selectAll(".title-text").
-        remove();
-    });
+    .on("mouseleave", function (event, d) {
+        d3.select(this).style("stroke-width", "1px");
+    })
+    .append("title")
+    .text(d => d["Country Name"]);
 
     //todo x axis is in y=0, but rn its too cluttered
     svg.append("g")
