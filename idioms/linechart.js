@@ -119,4 +119,9 @@ function createLineChart(data){
         });
        
 
+    d3.select("#resetButton").on("click", () => {
+        countries.forEach(d => d.selected = false);
+        svg.selectAll(".line")
+            .style("opacity", 0.1);
+    });
 }
