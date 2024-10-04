@@ -1,32 +1,4 @@
-/*
-TODO:
-width height hardcoded
-filter, interaction in general
-tooltip worth it?
-color according to gdp (add gdp data)
-*/
-var migrationData;
-
-function startDashboard() {
-    d3.csv("../data/migration_clean.csv")
-    .then((data) => {
-        migrationData = data;
-        /*
-        migrationData.forEach(d => {
-            for (let key in d) {
-                if (!isNaN(+d[key])&& key !== "Country Name" && key !== "Country Code") {
-                    d[key] = +d[key];
-                }
-            }
-        });
-        */
-        createLineChart(migrationData);
-    })
-}
-
-
-//todo move this to a separate file
-//todo width and heioght are currently hardcoded
+//todo width and height are currently hardcoded
 function createLineChart(data){
 
     //group by country and year
