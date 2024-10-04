@@ -73,21 +73,66 @@ function createLineChart(data){
     // Set up color scale for the lines
     const color = d3.scaleOrdinal(d3.schemeCategory10);
 
+    console.log(countries);
     // Add line for each country
+
+    // const countryLines = svg.selectAll(".line")
+    // .data(countries)
+    // .enter()
+    // .append("path")
+    // .attr("class", "line")
+    // .attr("d", d => line(d.values))
+    // .attr("stroke", d => color(d.name))
+    // .attr("stroke-width", 5)
+    // .attr("fill", "none")
+    // .style("opacity", 0.1) // Set initial opacity to 1
+    // .on("click", function(event, d) {
+    //     d.visible = !d.visible;
+    //     d3.select(this)
+    //         .style("opacity", d.visible ? 1 : 0.1);
+    // });
+
     const countryLines = svg.selectAll(".line")
-        .data(countries)
-        .enter()
-        .append("path")
-        .attr("class", "line")
-        .attr("d", d => line(d.values))
-        .attr("stroke", d => color(d.name))
-        .attr("stroke-width", 5)
-        .attr("fill", "none")
-        .style("opacity", 0.1) // Set initial opacity to 1
+       .data(countries)
+       .enter()
+       .append("path")
+       .attr("class", "line")
+       .attr("d", d => line(d.values))
+       .attr("stroke", d => color(d.name))
+       .attr("stroke-width", 1.5)
+       .attr("fill", "none")
+       .style("opacity", 0.1)
+       .on("mouseover", function(event, d) {
+        d3.select(this).style("cursor", "pointer").style("stroke-width", 3);
+        })
+        .on("mouseleave", function(d) {
+            
+            d3.select(this).style("stroke-width", "1.5px");
+            d3.select(this).style("opacity", "0.1");
+        })
+        .on("mousemove", function(event, d) { // Display tooltip with country name and closest gdp horizontally
+
+            const [mouseX] = d3.pointer(event);
+            const closestYear = Math.round(xScale.invert(mouseX));
+            const closestData = d.values.find(v => v.year === closestYear);
+            
+            if (closestData) {
+                d3.select(this)
+                .select("title")
+                .remove();
+    
+                d3.select(this)
+                .append("title")
+                .text(`${d.name} \nYear: ${closestData.year}\nGDP: ${(closestData.gdp / 1e9).toFixed(3)} B$`);
+            } else console.log("no data", closestYear);
+
+            d3.select(this).style("opacity", "1.0");
+        })
         .on("click", function(event, d) {
             d.visible = !d.visible;
             d3.select(this)
                 .style("opacity", d.visible ? 1 : 0.1);
         });
+       
 
 }
