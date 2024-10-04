@@ -72,6 +72,7 @@ function createLineChart(data){
     // Set up color scale for the lines
     const color = d3.scaleOrdinal(d3.schemeCategory10);
 
+    console.log(countries);
     // Add line for each country
     svg.selectAll(".line")
        .data(countries)
@@ -81,18 +82,29 @@ function createLineChart(data){
        .attr("d", d => line(d.values))
        .attr("stroke", d => color(d.name))
        .attr("stroke-width", 1.5)
-       .attr("fill", "none");
+       .attr("fill", "none")
+       .on("mouseover", function(event, d) {
+        d3.select(this).style("cursor", "pointer").style("stroke-width", 3);
+        })
+        .on("mouseleave", function(d) {
+            d3.select(this).style("stroke-width", "1.5px");
+        })
+        .on("mousemove", function(event, d) { // Display tooltip with country name and closest gdp horizontally
 
-    // // Add legend
-    // svg.selectAll(".legend")
-    //    .data(countries)
-    //    .enter()
-    //    .append("text")
-    //    .attr("x", width - 50)
-    //    .attr("y", (d, i) => i * 20)
-    //    .attr("dy", "0.35em")
-    //    .attr("text-anchor", "start")
-    //    .attr("fill", d => color(d.name))
-    //    .text(d => d.name);
+            const [mouseX] = d3.pointer(event);
+            const closestYear = Math.round(xScale.invert(mouseX));
+            const closestData = d.values.find(v => v.year === closestYear);
+            
+            if (closestData) {
+                d3.select(this)
+                .select("title")
+                .remove();
+    
+                d3.select(this)
+                .append("title")
+                .text(`${d.name} \nYear: ${closestData.year}\nGDP: ${(closestData.gdp / 1e9).toFixed(3)} B$`);
+            } else console.log("no data", closestYear);
+        });
+       
 
 }
