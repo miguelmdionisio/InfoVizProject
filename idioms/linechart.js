@@ -1,3 +1,5 @@
+let shiftIsPressed = false;
+
 //todo width and height are currently hardcoded
 function createLineChart(data){
 
@@ -5,8 +7,6 @@ function createLineChart(data){
     const margin = {top: 20, right: 80, bottom: 50, left: 80},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
-
-    let shiftIsPressed = false;
 
     // Append SVG to the chart div
     const svg = d3.select("#lineChart")
@@ -38,8 +38,7 @@ function createLineChart(data){
             values: years.map(year => {
                 return {year: year, gdp: +d[year]};
             }),
-            selected: true,
-            insideBoxSelection: false
+            selected: true
         };
     });
 
@@ -78,12 +77,10 @@ function createLineChart(data){
                 });
 
                 if (intersects) {
-                    d.insideBoxSelection = true;
                     d.selected = true;
                     d3.select(this).style("opacity", "1.0");
                 }
                 else {
-                    d.insideBoxSelection = false;
                     d.selected = false;
                     d3.select(this).style("opacity", "0.1");
                 }
@@ -116,8 +113,6 @@ function createLineChart(data){
     // Set up color scale for the lines
     const color = d3.scaleOrdinal(d3.schemeCategory10);
 
-    // console.log(countries);
-
     // Add line for each country
     const countryLines = svg.selectAll(".line")
        .data(countries)
@@ -135,7 +130,7 @@ function createLineChart(data){
         })
         .on("mouseleave", function(event, d) {
             d3.select(this).style("stroke-width", "1.5px");
-            if (!d.selected && !d.insideBoxSelection) {
+            if (!d.selected) {
                 d3.select(this).style("opacity", "0.1");
             }
         })
@@ -158,11 +153,19 @@ function createLineChart(data){
             d3.select(this).style("opacity", "1.0");
         })
         .on("click", function(event, d) {
+            if (!shiftIsPressed) {
+                dismissBrush();
+                countries.forEach(d => d.selected = false);
+                svg.selectAll(".line")
+                    .style("opacity", 0.1);
+            }
+
             d.selected = !d.selected;
+            d3.select(this).style("stroke-width", "1.5px");
+            d3.select(this).style("opacity", d.selected ? "1.0" : "0.1");
         });
        
     function dismissBrush() {
-        countries.forEach(d => d.insideBoxSelection = false);
         brushGroup.call(brush.move, null);
     }
 
@@ -174,3 +177,15 @@ function createLineChart(data){
     });
 
 }
+
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Shift') {
+        shiftIsPressed = true;
+    }
+});
+
+document.addEventListener('keyup', (event) => {
+    if (event.key === 'Shift') {
+        shiftIsPressed = false;
+    }
+});
