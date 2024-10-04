@@ -1,12 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <script src="https://d3js.org/d3.v7.js"></script>
-        <script src="linechart.js"></script>
-    </head>
-    <body onload="startDashboard()">
-        <div class="dashboard">
-            <div class="visualization" id="lineChart"></div>
-        </div>
-    </body>
+  <head>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://d3js.org/d3.v7.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="linechart.js"></script>
+  </head>
+  <body onload="startDashboard()">
+    <div class="flex justify-between w-full h-1/2">
+      <div class="w-1/3 border-solid border-2 border-sky-500">
+        w-1/3
+        <h1 class="text-center mt-48">Choropleth Map</h1>
+      </div>
+      <div class="w-1/3 border-solid border-2 border-sky-500">
+        w-1/3
+        <h1 class="text-center mt-48">Chord Diagram</h1>
+      </div>
+      <div class="w-1/3 border-solid border-2 border-sky-500">
+        w-1/3
+        <h1 class="text-center mt-48">Chord Diagram</h1>
+      </div>
+    </div>
+    <div >
+        <div id="lineChart"></div>
+        <div id="timeline"></div>
+    </div>
+  </body>
 </html>
