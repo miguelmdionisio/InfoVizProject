@@ -1,4 +1,5 @@
 let shiftIsPressed = false;
+let selectionOngoing = false;
 
 //todo width and height are currently hardcoded
 function createLineChart(data){
@@ -52,7 +53,8 @@ function createLineChart(data){
     // setup range selection brush and attach it to svg
     const brush = d3.brush()
         .extent([[0, 0], [width, height]])
-        .on("start brush end", brushed);
+        .on("start brush end", brushed)
+        .keyModifiers(false);
     const brushGroup = svg.append("g")
         .attr("class", "brush")
         .call(brush);
@@ -63,6 +65,7 @@ function createLineChart(data){
             countries.forEach(d => d.selected = true);
             svg.selectAll(".line")
                 .style("opacity", 1.0);
+            selectionOngoing = false;
             return
         };
         
@@ -81,10 +84,14 @@ function createLineChart(data){
                     d3.select(this).style("opacity", "1.0");
                 }
                 else {
-                    d.selected = false;
-                    d3.select(this).style("opacity", "0.1");
+                    if (!shiftIsPressed || !selectionOngoing) {
+                        d.selected = false;
+                        d3.select(this).style("opacity", "0.1");
+                    }
                 }
             });
+
+        selectionOngoing = true;
     }
 
     // Add x-axis to the chart
@@ -163,6 +170,7 @@ function createLineChart(data){
             d.selected = !d.selected;
             d3.select(this).style("stroke-width", "1.5px");
             d3.select(this).style("opacity", d.selected ? "1.0" : "0.1");
+            selectionOngoing = d.selected;
         });
        
     function dismissBrush() {
@@ -174,6 +182,7 @@ function createLineChart(data){
         svg.selectAll(".line")
             .style("opacity", 1.0);
         dismissBrush();
+        selectionOngoing = false;
     });
 
 }
