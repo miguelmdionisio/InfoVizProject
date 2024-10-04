@@ -6,6 +6,8 @@ function createLineChart(data){
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
+    let shiftIsPressed = false;
+
     // Append SVG to the chart div
     const svg = d3.select("#lineChart")
         .append("svg")
@@ -36,7 +38,8 @@ function createLineChart(data){
             values: years.map(year => {
                 return {year: year, gdp: +d[year]};
             }),
-            selected: false
+            selected: true,
+            insideBoxSelection: false
         };
     });
 
@@ -46,6 +49,46 @@ function createLineChart(data){
         0,
         d3.max(countries, c => d3.max(c.values, v => v.gdp))
     ]);
+
+    // setup range selection brush and attach it to svg
+    const brush = d3.brush()
+        .extent([[0, 0], [width, height]])
+        .on("start brush end", brushed);
+    const brushGroup = svg.append("g")
+        .attr("class", "brush")
+        .call(brush);
+
+    // range selection brush function
+    function brushed({selection}) {
+        if (selection === null) {
+            countries.forEach(d => d.selected = true);
+            svg.selectAll(".line")
+                .style("opacity", 1.0);
+            return
+        };
+        
+        const [[x0, y0], [x1, y1]] = selection;
+    
+        svg.selectAll(".line")
+            .each(function(d) {
+                const intersects = d.values.some(point => {
+                    const x = xScale(point.year);
+                    const y = yScale(point.gdp);
+                    return x >= x0 && x <= x1 && y >= y0 && y <= y1;
+                });
+
+                if (intersects) {
+                    d.insideBoxSelection = true;
+                    d.selected = true;
+                    d3.select(this).style("opacity", "1.0");
+                }
+                else {
+                    d.insideBoxSelection = false;
+                    d.selected = false;
+                    d3.select(this).style("opacity", "0.1");
+                }
+            });
+    }
 
     // Add x-axis to the chart
     svg.append("g")
@@ -85,14 +128,14 @@ function createLineChart(data){
        .attr("stroke", d => color(d.name))
        .attr("stroke-width", 1.5)
        .attr("fill", "none")
-       .style("opacity", 0.1)
+       .style("opacity", 1.0)
        .on("mouseover", function(event, d) {
             d3.select(this).style("cursor", "pointer").style("stroke-width", 3);
             d3.select(this).style("opacity", "1.0");
         })
         .on("mouseleave", function(event, d) {
             d3.select(this).style("stroke-width", "1.5px");
-            if (!d.selected) {
+            if (!d.selected && !d.insideBoxSelection) {
                 d3.select(this).style("opacity", "0.1");
             }
         })
@@ -118,10 +161,16 @@ function createLineChart(data){
             d.selected = !d.selected;
         });
        
+    function dismissBrush() {
+        countries.forEach(d => d.insideBoxSelection = false);
+        brushGroup.call(brush.move, null);
+    }
 
     d3.select("#resetButton").on("click", () => {
-        countries.forEach(d => d.selected = false);
+        countries.forEach(d => d.selected = true);
         svg.selectAll(".line")
-            .style("opacity", 0.1);
+            .style("opacity", 1.0);
+        dismissBrush();
     });
+
 }
