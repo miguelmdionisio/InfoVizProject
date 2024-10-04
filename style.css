@@ -1,18 +1,19 @@
-body {
-    height: 100%;
-    margin: 0;
-    font-family: Arial, sans-serif;
-  }
-  
-  .container {
-    display: grid;
-    grid-auto-columns: 1fr;
-    grid-template-columns: 1fr 1fr;
-    gap: 0px 0px;
-    grid-template-areas:
-      "LineChart LineChart";
-  }
-  .LineChart {
-    grid-area: LineChart;
-  }
-  
+.line {
+    fill: none;
+    stroke-width: 1.5px;
+    cursor: pointer;
+    transition: opacity 0.3s;
+}
+.click-area {
+    fill: none;
+    stroke: transparent;
+    stroke-width: 10px;
+    cursor: pointer;
+}
+.axis path, .axis line {
+    fill: none;
+    shape-rendering: crispEdges;
+}
+.axis text {
+    font-size: 12px;
+}

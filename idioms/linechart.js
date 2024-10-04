@@ -8,11 +8,11 @@ function createLineChart(data){
 
     // Append SVG to the chart div
     const svg = d3.select("#lineChart")
-                .append("svg")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom)
-                .append("g")
-                .attr("transform", `translate(${margin.left}, ${margin.top})`);
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
     // Scales
     const xScale = d3.scaleLinear().range([0, width]);
@@ -20,12 +20,12 @@ function createLineChart(data){
 
     // Axis definitions
     const xAxis = d3.axisBottom(xScale).tickFormat(d3.format("d"));
-    const yAxis = d3.axisLeft(yScale);
+    const yAxis = d3.axisLeft(yScale).tickFormat(d => d3.format(".1f")(d / 1000000000) + "B");
 
     // Line generator
     const line = d3.line()
-                .x(d => xScale(d.year))
-                .y(d => yScale(d.gdp));
+        .x(d => xScale(d.year))
+        .y(d => yScale(d.gdp));
 
     const years = Object.keys(data[0]).filter(d => d !== "Country Name" && d !== "Country Code").map(Number);
 
@@ -35,7 +35,8 @@ function createLineChart(data){
             name: d["Country Name"],
             values: years.map(year => {
                 return {year: year, gdp: +d[year]};
-            })
+            }),
+            visible: true
         };
     });
 
@@ -54,45 +55,39 @@ function createLineChart(data){
        .append("text")
        .attr("fill", "#000")
        .attr("x", width)
-       .attr("y", -10)
+       .attr("y", 15)
        .attr("text-anchor", "end")
        .text("Year");
 
     // Add y-axis to the chart
     svg.append("g")
-       .attr("class", "y axis")
-       .call(yAxis)
-       .append("text")
-       .attr("fill", "#000")
-       .attr("x", 6)
-       .attr("dy", "-2em")
-       .attr("text-anchor", "end")
-       .text("GDP");
+        .attr("class", "y axis")
+        .call(yAxis)
+        .append("text")
+        .attr("fill", "#000")
+        .attr("x", 6)
+        .attr("dy", "-0.5em")
+        .attr("text-anchor", "end")
+        .text("GDP (Billions)");
 
     // Set up color scale for the lines
     const color = d3.scaleOrdinal(d3.schemeCategory10);
 
     // Add line for each country
-    svg.selectAll(".line")
-       .data(countries)
-       .enter()
-       .append("path")
-       .attr("class", "line")
-       .attr("d", d => line(d.values))
-       .attr("stroke", d => color(d.name))
-       .attr("stroke-width", 1.5)
-       .attr("fill", "none");
-
-    // // Add legend
-    // svg.selectAll(".legend")
-    //    .data(countries)
-    //    .enter()
-    //    .append("text")
-    //    .attr("x", width - 50)
-    //    .attr("y", (d, i) => i * 20)
-    //    .attr("dy", "0.35em")
-    //    .attr("text-anchor", "start")
-    //    .attr("fill", d => color(d.name))
-    //    .text(d => d.name);
+    const countryLines = svg.selectAll(".line")
+        .data(countries)
+        .enter()
+        .append("path")
+        .attr("class", "line")
+        .attr("d", d => line(d.values))
+        .attr("stroke", d => color(d.name))
+        .attr("stroke-width", 5)
+        .attr("fill", "none")
+        .style("opacity", 0.1) // Set initial opacity to 1
+        .on("click", function(event, d) {
+            d.visible = !d.visible;
+            d3.select(this)
+                .style("opacity", d.visible ? 1 : 0.1);
+        });
 
 }
