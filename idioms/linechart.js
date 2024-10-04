@@ -20,7 +20,7 @@ function createLineChart(data){
 
     // Axis definitions
     const xAxis = d3.axisBottom(xScale).tickFormat(d3.format("d"));
-    const yAxis = d3.axisLeft(yScale);
+    const yAxis = d3.axisLeft(yScale).tickFormat(d => `${d / 1e9} B$`);
 
     // Line generator
     const line = d3.line()
