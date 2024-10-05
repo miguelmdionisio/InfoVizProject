@@ -4,13 +4,10 @@ let selectionOngoing = false;
 const minYear = 1991;
 const maxYear = 2023;
 
-
-
-
 // Dimensions for the chart
-const lineChartMargin = { top: 20, right: 80, bottom: 50, left: 80 },
-    lineChartWidth = 960 - lineChartMargin.left - lineChartMargin.right,
-    lineChartHeight = 500 - lineChartMargin.top - lineChartMargin.bottom;
+const lineChartMargin = {top: 20, right: 80, bottom: 10, left: 80},
+lineChartWidth = window.innerWidth - 200,
+lineChartHeight = window.innerHeight/2 - 200;
 
 let lineChartSVG;
 
