@@ -9,4 +9,5 @@ function init() {
         createLineChart(data);
     });
     createTimeline();
+    setupEvents();
 }

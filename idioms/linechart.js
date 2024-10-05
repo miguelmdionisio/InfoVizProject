@@ -36,7 +36,7 @@ function createLineChart(data){
 
     // Axis definitions
     const xAxis = d3.axisBottom(xScale).tickFormat(d3.format("d"));
-    const yAxis = d3.axisLeft(yScale).tickFormat(d => `${d / 1e9} B$`);
+    const yAxis = d3.axisLeft(yScale).tickFormat(d => `${d / 1e9}`);
 
     // Line generator
     const line = d3.line()
@@ -128,7 +128,7 @@ function createLineChart(data){
         .attr("x", 6)
         .attr("dy", "-0.5em")
         .attr("text-anchor", "end")
-        .text("GDP (Billions)");
+        .text("GDP (Billions $)");
 
     // Set up color scale for the lines
     const color = d3.scaleOrdinal(d3.schemeCategory10);
@@ -167,7 +167,7 @@ function createLineChart(data){
     
                 d3.select(this)
                 .append("title")
-                .text(`${d.name} \nYear: ${closestData.year}\nGDP: ${(closestData.gdp / 1e9).toFixed(3)} B$`);
+                .text(`${d.name} \nYear: ${closestData.year}\nGDP: ${(closestData.gdp / 1e9).toFixed(3)}`);
             } else console.log("no data", closestYear);
 
             d3.select(this).style("opacity", "1.0");
