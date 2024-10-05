@@ -1,25 +1,40 @@
 let shiftIsPressed = false;
 let selectionOngoing = false;
 
+const minYear = 1991;
+const maxYear = 2023;
+
+// Dimensions for the chart
+const lineChartMargin = {top: 20, right: 80, bottom: 50, left: 80},
+lineChartWidth = 960 - lineChartMargin.left - lineChartMargin.right,
+lineChartHeight = 500 - lineChartMargin.top - lineChartMargin.bottom;
+
+let lineChartSVG;
+
 //todo width and height are currently hardcoded
 function createLineChart(data){
 
-    // Dimensions for the chart
-    const margin = {top: 20, right: 80, bottom: 50, left: 80},
-    width = 960 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
-
     // Append SVG to the chart div
-    const svg = d3.select("#lineChart")
+    lineChartSVG = d3.select("#lineChart")
         .append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
+        .attr("width", lineChartWidth + lineChartMargin.left + lineChartMargin.right)
+        .attr("height", lineChartHeight + lineChartMargin.top + lineChartMargin.bottom)
         .append("g")
-        .attr("transform", `translate(${margin.left}, ${margin.top})`);
+        .attr("transform", `translate(${lineChartMargin.left}, ${lineChartMargin.top})`);
+
+    // timespan background shade
+    lineChartSVG.append("rect")
+        .attr("class", "highlight")
+        .attr("fill", "#d3d3d3") // Light grey, or your desired color
+        .attr("opacity", 0.5) // Adjust transparency if needed
+        .attr("x", 0) // Initial position
+        .attr("y", 0) // Adjust based on chart's layout
+        .attr("width", 0) // Initial width, updated based on selection
+        .attr("height", lineChartHeight); // Set this to match the height of the chart area
 
     // Scales
-    const xScale = d3.scaleLinear().range([0, width]);
-    const yScale = d3.scaleLinear().range([height, 0]);
+    const xScale = d3.scaleLinear().range([0, lineChartWidth]);
+    const yScale = d3.scaleLinear().range([lineChartHeight, 0]);
 
     // Axis definitions
     const xAxis = d3.axisBottom(xScale).tickFormat(d3.format("d"));
@@ -52,10 +67,10 @@ function createLineChart(data){
 
     // setup range selection brush and attach it to svg
     const brush = d3.brush()
-        .extent([[0, 0], [width, height]])
+        .extent([[0, 0], [lineChartWidth, lineChartHeight]])
         .on("start brush end", brushed)
         .keyModifiers(false);
-    const brushGroup = svg.append("g")
+    const brushGroup = lineChartSVG.append("g")
         .attr("class", "brush")
         .call(brush);
 
@@ -63,7 +78,7 @@ function createLineChart(data){
     function brushed({selection}) {
         if (selection === null) {
             countries.forEach(d => d.selected = true);
-            svg.selectAll(".line")
+            lineChartSVG.selectAll(".line")
                 .style("opacity", 1.0);
             selectionOngoing = false;
             return
@@ -71,7 +86,7 @@ function createLineChart(data){
         
         const [[x0, y0], [x1, y1]] = selection;
     
-        svg.selectAll(".line")
+        lineChartSVG.selectAll(".line")
             .each(function(d) {
                 const intersects = d.values.some(point => {
                     const x = xScale(point.year);
@@ -95,19 +110,19 @@ function createLineChart(data){
     }
 
     // Add x-axis to the chart
-    svg.append("g")
+    lineChartSVG.append("g")
        .attr("class", "x axis")
-       .attr("transform", `translate(0, ${height})`)
+       .attr("transform", `translate(0, ${lineChartHeight})`)
        .call(xAxis)
        .append("text")
        .attr("fill", "#000")
-       .attr("x", width)
+       .attr("x", lineChartWidth)
        .attr("y", 15)
        .attr("text-anchor", "end")
        .text("Year");
 
     // Add y-axis to the chart
-    svg.append("g")
+    lineChartSVG.append("g")
         .attr("class", "y axis")
         .call(yAxis)
         .append("text")
@@ -121,7 +136,7 @@ function createLineChart(data){
     const color = d3.scaleOrdinal(d3.schemeCategory10);
 
     // Add line for each country
-    const countryLines = svg.selectAll(".line")
+    const countryLines = lineChartSVG.selectAll(".line")
        .data(countries)
        .enter()
        .append("path")
@@ -163,7 +178,7 @@ function createLineChart(data){
             if (!shiftIsPressed) {
                 dismissBrush();
                 countries.forEach(d => d.selected = false);
-                svg.selectAll(".line")
+                lineChartSVG.selectAll(".line")
                     .style("opacity", 0.1);
             }
 
@@ -179,11 +194,13 @@ function createLineChart(data){
 
     d3.select("#resetButton").on("click", () => {
         countries.forEach(d => d.selected = true);
-        svg.selectAll(".line")
+        lineChartSVG.selectAll(".line")
             .style("opacity", 1.0);
         dismissBrush();
         selectionOngoing = false;
     });
+
+    updateHighlight(minYear, maxYear);
 
 }
 
@@ -198,3 +215,19 @@ document.addEventListener('keyup', (event) => {
         shiftIsPressed = false;
     }
 });
+
+function updateHighlight(startYear, endYear) {
+    // Assume you have a time scale for the x-axis
+    const xScale = d3.scaleTime()
+                    .domain([new Date(minYear, 0, 1), new Date(maxYear, 11, 31)])
+                    .range([0, lineChartWidth]); // Adjust `width` based on your chart
+ 
+    // Calculate the x position and width for the highlight rectangle
+    const xStart = xScale(new Date(startYear, 0, 1));
+    const xEnd = xScale(new Date(endYear, 11, 31));
+ 
+    // Update the rectangle's attributes to represent the selected time span
+    lineChartSVG.select(".highlight")
+       .attr("x", xStart)
+       .attr("width", xEnd - xStart);
+}

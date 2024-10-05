@@ -8,4 +8,5 @@ function init() {
     .then((data) => {
         createLineChart(data);
     });
+    createTimeline();
 }
