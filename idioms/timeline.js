@@ -1,8 +1,8 @@
 function createTimeline() {
     // Set up dimensions and margins for the SVG container
     const margin = { top: 20, right: 20, bottom: 30, left: 20 };
-    const width = 1000 - margin.left - margin.right;
-    const height = 100 - margin.top - margin.bottom;
+    const width = 840 - margin.left - margin.right;
+    const height = 100  - margin.top - margin.bottom;
 
     let startYear = new Date(minYear, 0, 1);
     let endYear = new Date(maxYear, 0, 1);
@@ -13,7 +13,7 @@ function createTimeline() {
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
-        .attr("transform", `translate(${margin.left}, ${margin.top})`);
+        .attr("transform", `translate(${margin.left + (window.innerWidth/2 - 840/2)}, ${margin.top})`);
 
     // Define the scale for the timeline (years 1990 to 2023)
     const xScale = d3.scaleTime()

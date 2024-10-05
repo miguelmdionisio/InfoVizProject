@@ -7,20 +7,19 @@ const maxYear = 2023;
 // Dimensions for the chart
 const lineChartMargin = {top: 20, right: 80, bottom: 50, left: 80},
 lineChartWidth = 960 - lineChartMargin.left - lineChartMargin.right,
-lineChartHeight = 500 - lineChartMargin.top - lineChartMargin.bottom;
+lineChartHeight = 300 - lineChartMargin.top - lineChartMargin.bottom;
 
 let lineChartSVG;
 
 //todo width and height are currently hardcoded
 function createLineChart(data){
-
     // Append SVG to the chart div
     lineChartSVG = d3.select("#lineChart")
         .append("svg")
         .attr("width", lineChartWidth + lineChartMargin.left + lineChartMargin.right)
         .attr("height", lineChartHeight + lineChartMargin.top + lineChartMargin.bottom)
         .append("g")
-        .attr("transform", `translate(${lineChartMargin.left}, ${lineChartMargin.top})`);
+        .attr("transform", `translate(${lineChartMargin.left + (window.innerWidth/2 - 960/2)}, ${lineChartMargin.top})`);
 
     // timespan background shade
     lineChartSVG.append("rect")
