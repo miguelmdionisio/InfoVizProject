@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <link rel="stylesheet" href="style.css">
     <script src="https://d3js.org/d3.v7.js"></script>
+    <script src="script.js"></script>
+    <script src="./idioms/linechart.js"></script>
+    <script src="./idioms/timeline.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="linechart.js"></script>
+    <link rel="stylesheet" href="style.css">
   </head>
-  <body onload="startDashboard()">
+  <body onload="init()">
     <div class="flex justify-between w-full h-1/2">
       <div class="w-1/3 border-solid border-2 border-sky-500">
         w-1/3
@@ -21,9 +23,11 @@
         <h1 class="text-center mt-48">Chord Diagram</h1>
       </div>
     </div>
-    <div >
-        <div id="lineChart"></div>
-        <div id="timeline"></div>
+    <div class="dashboard">
+      <button id="resetButton" class="bg-blue-500 hover:bg-blue-700 text-white font-bold h-8 px-4 m-2 text-sm rounded">Reset Selection</button>
+      <div class="visualization" id="lineChart"></div>
+      <div class="visualization" id="timeline"></div>
+      <div class="visualization" id="tooltip"></div>
     </div>
   </body>
 </html>
