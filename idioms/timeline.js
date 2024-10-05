@@ -2,7 +2,7 @@ function createTimeline() {
     // Set up dimensions and margins for the SVG container
     const margin = { top: 20, right: 20, bottom: 30, left: 20 };
     const width = 840 - margin.left - margin.right;
-    const height = 100  - margin.top - margin.bottom;
+    const height = 80  - margin.top - margin.bottom;
 
     let startYear = new Date(minYear, 0, 1);
     let endYear = new Date(maxYear, 0, 1);
