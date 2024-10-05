@@ -10,11 +10,8 @@ function createTimeline() {
     // Append the SVG element to the timeline div
     const svg = d3.select("#timeline")
         .append("svg")
-        // .attr("width", width + margin.left + margin.right)
-        // .attr("height", height + margin.top + margin.bottom)
         .append("g")
         .attr("transform", `translate(${margin.left * 6}, ${margin.top})`);
-        // .attr("transform", `translate(${margin.left + (window.innerWidth/2 - 840/2)}, ${margin.top})`);
 
     // Define the scale for the timeline (years 1990 to 2023)
     const xScale = d3.scaleTime()
@@ -100,6 +97,7 @@ function createTimeline() {
                     .style("opacity", 1);
             }
             updateRangeLine();
+            updateHighlight(getClosestYear(startYear), getClosestYear(endYear));
         })
         .on('end', function (event) { // snap to closest year
             tooltip.style("opacity", 0); // Hide tooltip
@@ -112,7 +110,6 @@ function createTimeline() {
                 d3.select(this).attr("cx", xScale(endYear));
             }
             updateRangeLine();
-            updateHighlight(getClosestYear(startYear), getClosestYear(endYear));
         })
     );
 

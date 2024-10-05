@@ -215,17 +215,17 @@ document.addEventListener('keyup', (event) => {
 });
 
 function updateHighlight(startYear, endYear) {
-    // Assume you have a time scale for the x-axis
     const xScale = d3.scaleTime()
                     .domain([new Date(minYear, 0, 1), new Date(maxYear, 11, 31)])
                     .range([0, lineChartWidth]); // Adjust `width` based on your chart
  
-    // Calculate the x position and width for the highlight rectangle
     const xStart = xScale(new Date(startYear, 0, 1));
     const xEnd = xScale(new Date(endYear, 11, 31));
  
-    // Update the rectangle's attributes to represent the selected time span
     lineChartSVG.select(".highlight")
-       .attr("x", xStart)
-       .attr("width", xEnd - xStart);
+        .transition()
+        .duration(350)
+        .ease(d3.easePolyOut)
+        .attr("x", xStart)
+        .attr("width", xEnd - xStart);
 }
