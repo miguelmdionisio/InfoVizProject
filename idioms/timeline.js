@@ -114,6 +114,61 @@ function createTimeline() {
             updateHighlight(getClosestYear(startYear), getClosestYear(endYear));
         })
     );
+
+    d3.csv("../../data/economic_events.csv").then(data => {
+        // Set up the SVG canvas and dimensions
+        const svg = d3.select("#timeline");
+        const width = +svg.attr("width");
+        const height = +svg.attr("height");
+        const margin = { top: 20, right: 20, bottom: 40, left: 40 };
+      
+        // Extract the range of years from the data
+        const startYear = d3.min(data, d => +d.year_start);
+        const endYear = d3.max(data, d => +d.year_end);
+
+        // console.log(startYear, endYear);
+      
+        // Create a scale for the x-axis
+        const xScale = d3.scaleLinear()
+          .domain([startYear, endYear])
+          .range([margin.left, width - margin.right]);
+      
+        // Create the x-axis
+        const xAxis = d3.axisBottom(xScale).tickFormat(d3.format("d"));
+      
+        // // Append x-axis to the SVG
+        // svg.append("g")
+        //   .attr("transform", `translate(0,${height - margin.bottom})`)
+        //   .call(xAxis);
+      
+        // Set the height for the rectangles
+        const rectHeight = 30;
+      
+        // Create rectangles for each event
+        svg.selectAll("rect")
+          .data(data)
+          .enter()
+          .append("rect")
+          .attr("x", d => xScale(+d.start_year))
+          .attr("y", (d, i) => margin.top + i * (rectHeight + 5))
+          .attr("width", d => xScale(+d.end_year) - xScale(+d.start_year))
+          .attr("height", rectHeight)
+          .attr("fill", "steelblue")
+          .attr("stroke", "black");
+      
+        // Add labels for each event
+        svg.selectAll("text")
+          .data(data)
+          .enter()
+          .append("text")
+          .attr("x", d => xScale(+d.start_year) + 5)
+          .attr("y", (d, i) => margin.top + i * (rectHeight + 5) + rectHeight / 2 + 5)
+          .text(d => d.event_name)
+          .attr("fill", "white")
+          .attr("font-size", "12px");
+
+      });
+      
 }
 
 function getClosestYear(date) {
