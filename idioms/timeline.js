@@ -112,6 +112,62 @@ function createTimeline() {
             updateRangeLine();
         })
     );
+
+    d3.csv("../../data/economic_events.csv").then(function(data) {
+        const uniqueEventNames = [...new Set(data.map(d => d.event_name))];
+
+        const select = d3.select("#event-select");
+
+        uniqueEventNames.forEach(eventName => {
+            select.append("option")
+                .attr("value", eventName)
+                .text(eventName);
+        });
+
+        function handleEventChange() {
+            const selectedOptions = Array.from(select.node().selectedOptions).map(option => option.value);
+
+            const selectedSet = new Set(selectedOptions);
+            const selectedEventsData = data.filter(d => selectedSet.has(d.event_name));
+            const eventsYears = selectedEventsData.map(d => ({
+                event_name: d.event_name,
+                year_start: d.year_start,
+                year_end: d.year_end
+            }));
+            updateSlidersBasedOnEventSelection(eventsYears);
+        }
+
+        function clearSelection() {
+            select.selectAll("option").property("selected", false);
+            handleEventChange();
+        }
+
+        select.on("change", handleEventChange);
+        d3.select("#clear-selection").on("click", clearSelection);
+
+    }).catch(function(error) {
+        console.error("Error loading the CSV file:", error);
+    });
+
+    function updateSlidersBasedOnEventSelection(selectionData) {
+        let year_start, year_end;
+        if (selectionData.length == 0) {
+            year_start = minYear;
+            year_end = maxYear;
+        } else {
+            year_start = Number(selectionData[0].year_start);
+            year_end = Number(selectionData[0].year_end);
+        }
+
+        startYear = new Date(year_start, 0, 1);
+        endYear = new Date(year_end, 0, 1);
+
+        startSlider.attr("cx", xScale(startYear));
+        endSlider.attr("cx", xScale(endYear));
+
+        updateRangeLine();
+        updateHighlight(getClosestYear(startYear), getClosestYear(endYear));
+    }
       
 }
 

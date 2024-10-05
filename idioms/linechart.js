@@ -23,12 +23,12 @@ function createLineChart(data){
     // timespan background shade
     lineChartSVG.append("rect")
         .attr("class", "highlight")
-        .attr("fill", "#d3d3d3") // Light grey, or your desired color
-        .attr("opacity", 0.5) // Adjust transparency if needed
-        .attr("x", 0) // Initial position
-        .attr("y", 0) // Adjust based on chart's layout
-        .attr("width", 0) // Initial width, updated based on selection
-        .attr("height", lineChartHeight); // Set this to match the height of the chart area
+        .attr("fill", "#d3d3d3")
+        .attr("opacity", 0.5)
+        .attr("x", 0)
+        .attr("y", 0)
+        .attr("width", 0)
+        .attr("height", lineChartHeight);
 
     // Scales
     const xScale = d3.scaleLinear().range([0, lineChartWidth]);
@@ -216,11 +216,11 @@ document.addEventListener('keyup', (event) => {
 
 function updateHighlight(startYear, endYear) {
     const xScale = d3.scaleTime()
-                    .domain([new Date(minYear, 0, 1), new Date(maxYear, 11, 31)])
-                    .range([0, lineChartWidth]); // Adjust `width` based on your chart
+                    .domain([new Date(minYear, 1, 1), new Date(maxYear, 1, 1)])
+                    .range([0, lineChartWidth]);
  
-    const xStart = xScale(new Date(startYear, 0, 1));
-    const xEnd = xScale(new Date(endYear, 11, 31));
+    const xStart = xScale(new Date(startYear, 1, 1));
+    const xEnd = xScale(new Date(endYear, 1, 1));
  
     lineChartSVG.select(".highlight")
         .transition()
@@ -229,3 +229,4 @@ function updateHighlight(startYear, endYear) {
         .attr("x", xStart)
         .attr("width", xEnd - xStart);
 }
+
