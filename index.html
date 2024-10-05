@@ -24,12 +24,16 @@
         >
           Reset Selection
         </button>
-        <select id="event-select"></select>
 
         <div class="flex items-center justify-center">
           <div class="visualization" id="lineChart" style="width: 100%"></div>
         </div>
-        <div class="visualization" id="timeline"></div>
+        <div class="visualization" id="timeline" style="height: 100px;"></div>
+        
+        <div class="flex items-center justify-center">
+          <select id="event-select" multiple class="w-1/2 border border-gray-300 rounded-md p-2" style="width: 30%; height: 100px; margin-bottom: 10px;"></select>
+        </div>
+
         <div class="visualization" id="tooltip"></div>
       </div>
     </div>

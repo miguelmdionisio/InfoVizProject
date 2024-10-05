@@ -72,3 +72,8 @@ button {
 .slider {
     cursor: grab;
 }
+
+#event-select {
+    width: 200px;
+    height: 100px; /* Adjust height to show multiple options */
+}
