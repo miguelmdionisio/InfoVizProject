@@ -30,6 +30,23 @@ function createLineChart(data){
         .attr("width", 0)
         .attr("height", lineChartHeight);
 
+    lineChartSVG.append("rect")
+        .attr("class", "highlight-pre")
+        .attr("fill", "#F0D2D1")
+        .attr("opacity", 0.5)
+        .attr("x", 0)
+        .attr("y", 0)
+        .attr("width", 0)
+        .attr("height", lineChartHeight);
+    lineChartSVG.append("rect")
+        .attr("class", "highlight-post")
+        .attr("fill", "#8EB19D")
+        .attr("opacity", 0.5)
+        .attr("x", 0)
+        .attr("y", 0)
+        .attr("width", 0)
+        .attr("height", lineChartHeight);
+
     // Scales
     const xScale = d3.scaleLinear().range([0, lineChartWidth]);
     const yScale = d3.scaleLinear().range([lineChartHeight, 0]);
@@ -221,6 +238,9 @@ function updateHighlight(startYear, endYear) {
  
     const xStart = xScale(new Date(startYear, 1, 1));
     const xEnd = xScale(new Date(endYear, 1, 1));
+
+    const xStartPre = xScale(new Date(Math.max(minYear, startYear - 2), 1, 1));
+    const xEndPost = xScale(new Date(Math.min(maxYear, endYear + 2), 1, 1));
  
     lineChartSVG.select(".highlight")
         .transition()
@@ -228,5 +248,19 @@ function updateHighlight(startYear, endYear) {
         .ease(d3.easePolyOut)
         .attr("x", xStart)
         .attr("width", xEnd - xStart);
+
+    lineChartSVG.select(".highlight-pre")
+        .transition()
+        .duration(350)
+        .ease(d3.easePolyOut)
+        .attr("x", xStartPre)
+        .attr("width", Math.max(0, xStart - xStartPre));
+
+    lineChartSVG.select(".highlight-post")
+        .transition()
+        .duration(350)
+        .ease(d3.easePolyOut)
+        .attr("x", xEnd)
+        .attr("width", Math.max(0, xEndPost - xEnd));
 }
 

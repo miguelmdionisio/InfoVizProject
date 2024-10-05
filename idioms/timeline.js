@@ -155,8 +155,8 @@ function createTimeline() {
             year_start = minYear;
             year_end = maxYear;
         } else {
-            year_start = Number(selectionData[0].year_start);
-            year_end = Number(selectionData[0].year_end);
+            year_start = Math.max(minYear, Number(selectionData[0].year_start));
+            year_end = Math.min(maxYear, Number(selectionData[0].year_end));
         }
 
         startYear = new Date(year_start, 0, 1);
