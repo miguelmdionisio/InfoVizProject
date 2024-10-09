@@ -9,4 +9,9 @@ function init() {
         createLineChart(data);
     });
     createTimeline();
+
+    d3.csv("../data/economic_events.csv")
+    .then((data) => {
+        createGanttChart(data);
+    });
 }

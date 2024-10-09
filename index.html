@@ -5,7 +5,7 @@
     <script src="script.js"></script>
     <script src="./idioms/linechart.js"></script>
     <script src="./idioms/timeline.js"></script>
-    <script src="./idioms/events.js"></script>
+    <script src="./idioms/ganttchart.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="style.css" />
   </head>
@@ -30,7 +30,7 @@
         </div>
         <div class="visualization" id="timeline" style="height: 100px"></div>
 
-        <div class="flex items-center justify-center">
+        <!-- <div class="flex items-center justify-center">
           <select
             id="event-select"
             multiple
@@ -43,8 +43,9 @@
           >
             Clear Event Selection
           </button>
-        </div>
+        </div> -->
 
+        <div class="visualization" id="ganttchart"></div>
         <div class="visualization" id="tooltip"></div>
       </div>
     </div>

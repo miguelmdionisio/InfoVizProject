@@ -248,8 +248,8 @@ function createLineChart(data) {
 
         //top of bottom 10% of y axis
         var bottom10 = newYScale.domain()[1] * 0.1;
-        console.log("bottom10", bottom10);
-        console.log("mouse em", (centerY/1e9).toFixed(2));
+        // console.log("bottom10", bottom10);
+        // console.log("mouse em", (centerY/1e9).toFixed(2));
         
         if (centerY < bottom10) {
             newY0 = y0;
@@ -260,7 +260,7 @@ function createLineChart(data) {
         y0 = newY0;
         y1 = newY1;
         //console.log("zoom on value", (newYScale.invert(mouseY)/1e9).toFixed(2));
-        console.log("Y0: ", (newY0 / 1e9).toFixed(2), "Y1: ", (newY1 / 1e9).toFixed(2));
+        // console.log("Y0: ", (newY0 / 1e9).toFixed(2), "Y1: ", (newY1 / 1e9).toFixed(2));
     
         const clampedYDomain = [
             Math.max(newY0, yScale.domain()[0]),

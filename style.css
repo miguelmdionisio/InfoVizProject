@@ -77,3 +77,9 @@ button {
     width: 200px;
     height: 100px; /* Adjust height to show multiple options */
 }
+
+.ganttbar {
+    fill: #456990;
+    rx: 5; /* to make rounded corners on the Gantt bars */
+    ry: 5;
+}
