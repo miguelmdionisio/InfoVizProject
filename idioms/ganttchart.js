@@ -1,25 +1,27 @@
+let events = [];
+
 function createGanttChart(data) {
 
     const margin = { top: 10, right: 20, bottom: 0, left: 20 };
     const width = window.innerWidth - 200;
     const height = 110  - margin.top - margin.bottom;
 
-    const tasks = [];
-    let taskIdx = 0;
+    let eventIdx = 0;
     for (const item of data) {
         // TODO: keep this or?
         // if (item.year_start < minYear || item.year_end > maxYear) {
         //     continue;
         // }
 
-        const task = {
-            task: item.event_name,
+        const event = {
+            name: item.event_name,
             startDate: new Date(item.year_start, 1, 1),
             endDate: new Date(item.year_end, 1, 1),
-            row: taskIdx % 2 ? 2 : 1 // alternate rows
+            row: eventIdx % 2 ? 2 : 1, // alternate rows
+            selected: false
         };
-        taskIdx++;
-        tasks.push(task);
+        eventIdx++;
+        events.push(event);
     }
 
     const svg = d3.select("#ganttchart")
@@ -29,18 +31,29 @@ function createGanttChart(data) {
         .append("g")
         .attr("transform", `translate(${margin.left * 6}, ${margin.top})`);
 
+    svg.append("rect")
+        .attr("width", width)
+        .attr("height", height)
+        .attr("fill", "transparent")
+        .on("mouseup", function() {
+            events.forEach((task) => task.selected = false);
+            svg.selectAll(".hover-label").remove();
+            updateSlidersBasedOnEventSelection();
+            updateBarSelectionColors();
+        });
+
     const x = d3.scaleTime()
         .domain([new Date(minYear, 0, 1), new Date(maxYear, 0, 1)])
         .range([0, width]);
 
-    const rows = Array.from(new Set(tasks.map(d => d.row)));
+    const rows = Array.from(new Set(events.map(d => d.row)));
     const rowScale = d3.scaleBand()
         .domain(rows)
         .range([0, height])
         .padding(0.5);
 
     svg.selectAll(".bar")
-        .data(tasks)
+        .data(events)
         .enter()
         .append("rect")
         .attr("class", "ganttbar")
@@ -49,62 +62,79 @@ function createGanttChart(data) {
         .attr("width", d => x(d.endDate) - x(d.startDate))
         .attr("height", rowScale.bandwidth())
 
+        .on("mouseup", function(event, d) {
+            if (!shiftIsPressed) {
+                events.forEach((task) => task.selected = false);
+            }
+
+            d.selected = true;
+            updateSlidersBasedOnEventSelection();
+            updateBarSelectionColors();
+
+            events.forEach((task) => {
+                if (!task.selected) {
+                    d3.select("#hoverLabel" + task.name.replace(/\s+/g, '')).remove();
+                }
+            });
+        })
+
         .on("mouseover", function(event, d) {
             d3.select(this)
                 .transition()
                 .duration(200)
                 .style("fill", "#92b0d1");
     
-            // hover label
-            svg.append("text")
-              .attr("class", "hover-label")
-              .attr("id", "hoverLabel" + d.task.replace(/\s+/g, ''))
-              .attr("x", x(d.startDate))
-              .attr("y", rowScale(d.row) - 5)
-              .attr("font-size", 14)
-              .text(d.task);
-          })
+            if (!svg.select("#hoverLabel" + d.name.replace(/\s+/g, '')).node()) {
+                // hover label
+                svg.append("text")
+                    .attr("class", "hover-label")
+                    .attr("id", "hoverLabel" + d.name.replace(/\s+/g, ''))
+                    .attr("x", x(d.startDate))
+                    .attr("y", rowScale(d.row) - 5)
+                    .attr("font-size", 14)
+                    .text(d.name);
+            }
+        })
 
-          .on("mouseout", function(event, d) {
+        .on("mouseout", function(event, d) {
             d3.select(this)
             .transition()
             .duration(200)
-            .style("fill", "#456990");
-    
-            d3.select("#hoverLabel" + d.task.replace(/\s+/g, '')).remove();
-          })
-          
-          .on("mouseup", function(event, d) {
-            updateSlidersBasedOnEventSelection(d);
-          });
+            .style("fill", d.selected ? "#92b0d1" : "#456990");
+
+            events.forEach((task) => {
+                if (!task.selected) {
+                    d3.select("#hoverLabel" + task.name.replace(/\s+/g, '')).remove();
+                }
+            });
+        });
+
+    function updateBarSelectionColors() {
+        svg.selectAll(".ganttbar")
+        .transition()
+        .duration(200)
+        .style("fill", function(d) {
+            return d.selected ? "#92b0d1" : "#456990";
+        });
+    }
 
 }
 
-function updateSlidersBasedOnEventSelection(selectedEvent) {
-    startSlider.attr("cx", timelineXScale(selectedEvent.startDate));
-    endSlider.attr("cx", timelineXScale(selectedEvent.endDate));
-    updateRangeLine();
-    updateHighlight(getClosestYear(selectedEvent.startDate), getClosestYear(selectedEvent.endDate));
+function updateSlidersBasedOnEventSelection() {
+    const allNotSelected = events.every(event => event.selected === false);
+
+    const earliestStartDate = allNotSelected ? new Date(minYear, 1, 1) : events
+        .filter(event => event.selected)
+        .map(event => event.startDate)
+        .reduce((earliest, date) => earliest < date ? earliest : date, Infinity) || null;
+
+    const latestEndDate = allNotSelected ? new Date(maxYear, 1, 1) : events
+        .filter(event => event.selected)
+        .map(event => event.endDate)
+        .reduce((latest, date) => latest > date ? latest : date, -Infinity) || null;
+
+    startSlider.attr("cx", timelineXScale(earliestStartDate));
+    endSlider.attr("cx", timelineXScale(latestEndDate));
+    updateRangeLine(earliestStartDate, latestEndDate);
+    updateHighlight();
 }
-
-
-/* DON'T DELETE THIS */
-// function updateSlidersBasedOnEventSelection(selectionData) {
-//     let year_start, year_end;
-//     if (selectionData.length == 0) {
-//         year_start = minYear;
-//         year_end = maxYear;
-//     } else {
-//         year_start = Math.max(minYear, Number(selectionData[0].year_start));
-//         year_end = Math.min(maxYear, Number(selectionData[0].year_end));
-//     }
-
-//     startYear = new Date(year_start, 0, 1);
-//     endYear = new Date(year_end, 0, 1);
-
-//     startSlider.attr("cx", xScale(startYear));
-//     endSlider.attr("cx", xScale(endYear));
-
-//     updateRangeLine();
-//     updateHighlight(getClosestYear(startYear), getClosestYear(endYear));
-// }

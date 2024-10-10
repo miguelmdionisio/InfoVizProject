@@ -1,4 +1,3 @@
-let shiftIsPressed = false;
 let selectionOngoing = false;
 
 const minYear = 1991;
@@ -20,32 +19,11 @@ function createLineChart(data) {
         .append("g")
         .attr("transform", `translate(${lineChartMargin.left * 1.5}, ${lineChartMargin.top})`);
 
-    // timespan background shade
-    lineChartSVG.append("rect")
-        .attr("class", "highlight")
-        .attr("fill", "#d3d3d3")
-        .attr("opacity", 0.5)
-        .attr("x", 0)
-        .attr("y", 0)
-        .attr("width", 0)
-        .attr("height", lineChartHeight);
-
-    lineChartSVG.append("rect")
-        .attr("class", "highlight-pre")
-        .attr("fill", "#F0D2D1")
-        .attr("opacity", 0.5)
-        .attr("x", 0)
-        .attr("y", 0)
-        .attr("width", 0)
-        .attr("height", lineChartHeight);
-    lineChartSVG.append("rect")
-        .attr("class", "highlight-post")
-        .attr("fill", "#8EB19D")
-        .attr("opacity", 0.5)
-        .attr("x", 0)
-        .attr("y", 0)
-        .attr("width", 0)
-        .attr("height", lineChartHeight);
+    // set up shadow highlights
+    createShadowHighlights("Default");
+    for (const e of events) {
+        createShadowHighlights(e.name);
+    }
 
     // Scales
     const xScale = d3.scaleLinear().range([0, lineChartWidth]);
@@ -279,51 +257,6 @@ function createLineChart(data) {
 
     }
 
-    updateHighlight(minYear, maxYear);
-}
-
-document.addEventListener('keydown', (event) => {
-    if (event.key === 'Shift') {
-        shiftIsPressed = true;
-    }
-});
-
-document.addEventListener('keyup', (event) => {
-    if (event.key === 'Shift') {
-        shiftIsPressed = false;
-    }
-});
-
-function updateHighlight(startYear, endYear) {
-    const xScale = d3.scaleTime()
-                    .domain([new Date(minYear, 1, 1), new Date(maxYear, 1, 1)])
-                    .range([0, lineChartWidth]);
- 
-    const xStart = xScale(new Date(startYear, 1, 1));
-    const xEnd = xScale(new Date(endYear, 1, 1));
-
-    const xStartPre = xScale(new Date(Math.max(minYear, startYear - 2), 1, 1));
-    const xEndPost = xScale(new Date(Math.min(maxYear, endYear + 2), 1, 1));
- 
-    lineChartSVG.select(".highlight")
-        .transition()
-        .duration(350)
-        .ease(d3.easePolyOut)
-        .attr("x", xStart)
-        .attr("width", xEnd - xStart);
-
-    lineChartSVG.select(".highlight-pre")
-        .transition()
-        .duration(350)
-        .ease(d3.easePolyOut)
-        .attr("x", xStartPre)
-        .attr("width", Math.max(0, xStart - xStartPre));
-
-    lineChartSVG.select(".highlight-post")
-        .transition()
-        .duration(350)
-        .ease(d3.easePolyOut)
-        .attr("x", xEnd)
-        .attr("width", Math.max(0, xEndPost - xEnd));
+    updateHighlight();
 }
 

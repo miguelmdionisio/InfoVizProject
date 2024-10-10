@@ -94,8 +94,8 @@ function createTimeline() {
                     .style("top", `${sliderBounds.top + window.scrollY - 30}px`) // Adjust top position
                     .style("opacity", 1);
             }
-            updateRangeLine();
-            updateHighlight(getClosestYear(startYear), getClosestYear(endYear));
+            updateRangeLine(startYear, endYear);
+            updateHighlight();
         })
         .on('end', function (event) { // snap to closest year
             tooltip.style("opacity", 0); // Hide tooltip
@@ -107,7 +107,7 @@ function createTimeline() {
                 endYear = new Date(getClosestYear(endYear), 0, 1);
                 d3.select(this).attr("cx", timelineXScale(endYear));
             }
-            updateRangeLine();
+            updateRangeLine(startYear, endYear);
         })
     );
 
@@ -159,8 +159,8 @@ function getClosestYear(date) {
 }
 
 // Update the range line positions whenever the sliders are dragged
-function updateRangeLine() {
+function updateRangeLine(start, end) {
     rangeLine
-        .attr("x1", timelineXScale(startYear))
-        .attr("x2", timelineXScale(endYear));
+        .attr("x1", timelineXScale(start))
+        .attr("x2", timelineXScale(end));
 }

@@ -6,6 +6,7 @@
     <script src="./idioms/linechart.js"></script>
     <script src="./idioms/timeline.js"></script>
     <script src="./idioms/ganttchart.js"></script>
+    <script src="./utils/highlightUtils.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="style.css" />
   </head>
@@ -29,21 +30,6 @@
           <div class="visualization" id="lineChart" style="width: 100%"></div>
         </div>
         <div class="visualization" id="timeline" style="height: 100px"></div>
-
-        <!-- <div class="flex items-center justify-center">
-          <select
-            id="event-select"
-            multiple
-            class="w-1/2 border border-gray-300 rounded-md p-2"
-            style="width: 30%; height: 100px; margin-bottom: 10px"
-          ></select>
-          <button
-            id="clear-selection"
-            class="bg-blue-500 hover:bg-blue-700 text-white font-bold h-8 px-4 m-2 text-sm rounded"
-          >
-            Clear Event Selection
-          </button>
-        </div> -->
 
         <div class="visualization" id="ganttchart"></div>
         <div class="visualization" id="tooltip"></div>
