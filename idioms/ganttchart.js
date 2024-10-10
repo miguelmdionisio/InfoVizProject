@@ -2,9 +2,9 @@ let events = [];
 
 function createGanttChart(data) {
 
-    const margin = { top: 10, right: 20, bottom: 0, left: 20 };
+    const margin = { top: 0, right: 20, bottom: 0, left: 20 };
     const width = window.innerWidth - 200;
-    const height = 110  - margin.top - margin.bottom;
+    const height = 100  - margin.top - margin.bottom;
 
     let eventIdx = 0;
     for (const item of data) {
@@ -133,8 +133,8 @@ function updateSlidersBasedOnEventSelection() {
         .map(event => event.endDate)
         .reduce((latest, date) => latest > date ? latest : date, -Infinity) || null;
 
-    startSlider.attr("cx", timelineXScale(earliestStartDate));
-    endSlider.attr("cx", timelineXScale(latestEndDate));
+    timelineStartSlider.attr("cx", timelineXScale(earliestStartDate));
+    timelineEndSlider.attr("cx", timelineXScale(latestEndDate));
     updateRangeLine(earliestStartDate, latestEndDate);
     updateHighlight();
 }

@@ -83,3 +83,22 @@ button {
     rx: 5; /* to make rounded corners on the Gantt bars */
     ry: 5;
 }
+
+.oswald-small {
+    font-family: "Oswald", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: bold;
+    text-decoration: underline;
+    font-style: normal;
+    text-transform: uppercase;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.oswald-big {
+    font-family: "Oswald", sans-serif;
+    font-weight: bold;
+    font-style: normal;
+    text-transform: uppercase;
+    font-size: 30px;
+}

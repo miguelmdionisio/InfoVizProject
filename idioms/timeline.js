@@ -1,21 +1,22 @@
-let startSlider, endSlider;
+let timelineStartSlider, timelineEndSlider;
 let timelineXScale;
-let rangeLine;
-let startYear, endYear;
+let timelineRangeLine;
+let timelineStartYear, timelineEndYear;
 
 function createTimeline() {
     // Set up dimensions and margins for the SVG container
-    const margin = { top: 10, right: 20, bottom: 0, left: 20 };
+    const margin = { top: 0, right: 20, bottom: 0, left: 20 };
     const width = window.innerWidth - 200;
-    const height = 80  - margin.top - margin.bottom;
+    const height = 30  - margin.top - margin.bottom;
 
-    startYear = new Date(minYear, 0, 1);
-    endYear = new Date(maxYear, 0, 1);
+    timelineStartYear = new Date(minYear, 0, 1);
+    timelineEndYear = new Date(maxYear, 0, 1);
 
     // Append the SVG element to the timeline div
     const svg = d3.select("#timeline")
         .append("svg")
         .append("g")
+        .attr("height", 50)
         .attr("transform", `translate(${margin.left * 6}, ${margin.top})`);
 
     // Define the scale for the timeline (years 1990 to 2023)
@@ -37,16 +38,16 @@ function createTimeline() {
     // Add slider circles for start and end years
     const sliderGroup = svg.append("g").attr("class", "sliders");
 
-    startSlider = sliderGroup.append("circle")
+    timelineStartSlider = sliderGroup.append("circle")
         .attr("class", "slider start")
-        .attr("cx", timelineXScale(startYear))
+        .attr("cx", timelineXScale(timelineStartYear))
         .attr("cy", height / 2)
         .attr("r", 8)
         .style("fill", "#F0D2D1");
 
-    endSlider = sliderGroup.append("circle")
+    timelineEndSlider = sliderGroup.append("circle")
         .attr("class", "slider end")
-        .attr("cx", timelineXScale(endYear))
+        .attr("cx", timelineXScale(timelineEndYear))
         .attr("cy", height / 2)
         .attr("r", 8)
         .style("fill", "#8EB19D");
@@ -57,10 +58,10 @@ function createTimeline() {
         .style("opacity", 0); // Start hidden
 
     // Add a line between the two sliders to indicate the selected range
-    rangeLine = sliderGroup.append("line")
+    timelineRangeLine = sliderGroup.append("line")
         .attr("class", "range-line")
-        .attr("x1", timelineXScale(startYear))
-        .attr("x2", timelineXScale(endYear))
+        .attr("x1", timelineXScale(timelineStartYear))
+        .attr("x2", timelineXScale(timelineEndYear))
         .attr("y1", height / 2)
         .attr("y2", height / 2)
         .attr("stroke", "#999")
@@ -73,41 +74,41 @@ function createTimeline() {
         })
         .on("drag", function (event, d) {
             if (d3.select(this).classed("start")) {
-                let newX = Math.min(timelineXScale(endYear), Math.max(0, event.x));
-                startYear = timelineXScale.invert(newX);
-                d3.select(this).attr("cx", timelineXScale(startYear));
+                let newX = Math.min(timelineXScale(timelineEndYear), Math.max(0, event.x));
+                timelineStartYear = timelineXScale.invert(newX);
+                d3.select(this).attr("cx", timelineXScale(timelineStartYear));
 
-                const sliderBounds = startSlider.node().getBoundingClientRect();
-                tooltip.html(`${getClosestYear(startYear)}`) // Update tooltip text
+                const sliderBounds = timelineStartSlider.node().getBoundingClientRect();
+                tooltip.html(`${getClosestYear(timelineStartYear)}`) // Update tooltip text
                     .style("left", `${sliderBounds.left + window.scrollX - 10}px`) // Use slider's left position
                     .style("top", `${sliderBounds.top + window.scrollY - 30}px`) // Adjust top position
                     .style("opacity", 1);
 
             } else if (d3.select(this).classed("end")) {
-                let newX = Math.max(timelineXScale(startYear), Math.min(width, event.x));
-                endYear = timelineXScale.invert(newX);
-                d3.select(this).attr("cx", timelineXScale(endYear));
+                let newX = Math.max(timelineXScale(timelineStartYear), Math.min(width, event.x));
+                timelineEndYear = timelineXScale.invert(newX);
+                d3.select(this).attr("cx", timelineXScale(timelineEndYear));
 
-                const sliderBounds = endSlider.node().getBoundingClientRect();
-                tooltip.html(`${getClosestYear(endYear)}`) // Update tooltip text
+                const sliderBounds = timelineEndSlider.node().getBoundingClientRect();
+                tooltip.html(`${getClosestYear(timelineEndYear)}`) // Update tooltip text
                     .style("left", `${sliderBounds.left + window.scrollX - 10}px`) // Use slider's left position
                     .style("top", `${sliderBounds.top + window.scrollY - 30}px`) // Adjust top position
                     .style("opacity", 1);
             }
-            updateRangeLine(startYear, endYear);
+            updateRangeLine(timelineStartYear, timelineEndYear);
             updateHighlight();
         })
         .on('end', function (event) { // snap to closest year
             tooltip.style("opacity", 0); // Hide tooltip
 
             if (d3.select(this).classed("start")) {
-                startYear = new Date(getClosestYear(startYear), 0, 1);
-                d3.select(this).attr("cx", timelineXScale(startYear));
+                timelineStartYear = new Date(getClosestYear(timelineStartYear), 0, 1);
+                d3.select(this).attr("cx", timelineXScale(timelineStartYear));
             } else if (d3.select(this).classed("end")) {
-                endYear = new Date(getClosestYear(endYear), 0, 1);
-                d3.select(this).attr("cx", timelineXScale(endYear));
+                timelineEndYear = new Date(getClosestYear(timelineEndYear), 0, 1);
+                d3.select(this).attr("cx", timelineXScale(timelineEndYear));
             }
-            updateRangeLine(startYear, endYear);
+            updateRangeLine(timelineStartYear, timelineEndYear);
         })
     );
 
@@ -160,7 +161,7 @@ function getClosestYear(date) {
 
 // Update the range line positions whenever the sliders are dragged
 function updateRangeLine(start, end) {
-    rangeLine
+    timelineRangeLine
         .attr("x1", timelineXScale(start))
         .attr("x2", timelineXScale(end));
 }

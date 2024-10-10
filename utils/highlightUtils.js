@@ -11,7 +11,7 @@ function updateHighlight() {
     }
 
     if (!someSelected) {
-        moveShadowHighlight("Default", startYear.getFullYear(), endYear.getFullYear());
+        moveShadowHighlight("Default", timelineStartYear.getFullYear(), timelineEndYear.getFullYear());
     } else {
         hideShadowHighlight("Default");
     }

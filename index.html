@@ -3,15 +3,23 @@
   <head>
     <script src="https://d3js.org/d3.v7.js"></script>
     <script src="script.js"></script>
+    <script src="./utils/globalVariables.js"></script>
+    <script src="./utils/highlightUtils.js"></script>
     <script src="./idioms/linechart.js"></script>
     <script src="./idioms/timeline.js"></script>
     <script src="./idioms/ganttchart.js"></script>
-    <script src="./utils/highlightUtils.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="style.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap" rel="stylesheet">
   </head>
   <body onload="init()" class="h-screen overflow-y-hidden">
+
     <div class="flex flex-col h-full">
+      <h1 class="flex oswald-big justify-center">The Economic History of the European Union</h1>
+
       <div class="flex flex-1">
         <div class="flex-1 bg-blue-200">Choropleth Map</div>
         <div class="flex-1 bg-blue-300">Chord Diagram 1</div>
@@ -19,21 +27,24 @@
       </div>
 
       <div class="flex-1">
-        <button
+        <h3 class="oswald-small">GDP Throughout The Years</h3>
+
+        <div class="flex items-center justify-center">
+          <div id="lineChart" style="width: 100%"></div>
+        </div>
+        <div id="timeline" style="height: 50px"></div>
+
+        <div id="ganttchart"></div>
+        <div id="tooltip"></div>
+      </div>
+
+        <!-- <button
           id="resetButton"
           class="bg-blue-500 hover:bg-blue-700 text-white font-bold h-8 px-4 m-2 text-sm rounded"
         >
           Reset Graph Selection
-        </button>
+        </button> -->
 
-        <div class="flex items-center justify-center">
-          <div class="visualization" id="lineChart" style="width: 100%"></div>
-        </div>
-        <div class="visualization" id="timeline" style="height: 100px"></div>
-
-        <div class="visualization" id="ganttchart"></div>
-        <div class="visualization" id="tooltip"></div>
-      </div>
     </div>
   </body>
 </html>
