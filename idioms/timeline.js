@@ -1,8 +1,3 @@
-let timelineStartSlider, timelineEndSlider;
-let timelineXScale;
-let timelineRangeLine;
-let timelineStartYear, timelineEndYear;
-
 function createTimeline() {
     // Set up dimensions and margins for the SVG container
     const margin = { top: 0, right: 20, bottom: 0, left: 20 };

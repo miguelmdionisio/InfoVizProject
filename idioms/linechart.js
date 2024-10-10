@@ -1,12 +1,5 @@
-// Dimensions for the chart
-const lineChartMargin = {top: 20, right: 80, bottom: 0, left: 80},
-lineChartWidth = window.innerWidth - 200,
-lineChartHeight = window.innerHeight/2 - 250;
-
-let lineChartSVG;
-
-//todo width and height are currently hardcoded
 function createLineChart(data) {
+
     // Append SVG to the chart div
     lineChartSVG = d3.select("#lineChart")
         .append("svg")
@@ -121,13 +114,13 @@ function createLineChart(data) {
     const color = d3.scaleOrdinal(d3.schemeCategory10);
 
     // Add line for each country
-    const countryLines = lineChartSVG.selectAll(".line")
+    lineChartSVG.selectAll(".line")
         .data(countries)
         .enter()
         .append("path")
         .attr("class", "line")
         .attr("d", d => line(d.values))
-        .attr("stroke", d => color(d.name))
+        .attr("stroke", d => southernCountries.includes(d.name) ? "#9E6240" : "#206087")
         .attr("stroke-width", 1.5)
         .attr("fill", "none")
         .style("opacity", 1.0)
