@@ -8,6 +8,7 @@
     <script src="./idioms/linechart.js"></script>
     <script src="./idioms/timeline.js"></script>
     <script src="./idioms/ganttchart.js"></script>
+    <script src="./idioms/chorddiagram.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="style.css" />
 
@@ -21,9 +22,17 @@
       <h1 class="flex oswald-big justify-center">The Economic History of the European Union</h1>
 
       <div class="flex flex-1">
-        <div class="flex-1 bg-blue-200">Choropleth Map</div>
-        <div class="flex-1 bg-blue-300">Chord Diagram 1</div>
-        <div class="flex-1 bg-blue-400">Chord Diagram 2</div>
+        <div class="flex-1 bg-blue-200">
+          <h3 class="oswald-small">Average Unemployment</h3>
+        </div>
+        <div class="flex-1 items-center justify-center">
+          <h3 class="oswald-small">Cumulative Immigration</h3>
+          <div id="chordDiagramImmigration" style="width: 100%"></div>
+        </div>
+        <div class="flex-1">
+          <h3 class="oswald-small">Cumulative Emigration</h3>
+          <div id="chordDiagramEmigration" style="width: 100%"></div>
+        </div>
       </div>
 
       <div class="flex-1">
@@ -37,13 +46,6 @@
         <div id="ganttchart"></div>
         <div id="tooltip"></div>
       </div>
-
-        <!-- <button
-          id="resetButton"
-          class="bg-blue-500 hover:bg-blue-700 text-white font-bold h-8 px-4 m-2 text-sm rounded"
-        >
-          Reset Graph Selection
-        </button> -->
 
     </div>
   </body>

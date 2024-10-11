@@ -129,14 +129,17 @@ function updateSlidersBasedOnEventSelection() {
         .filter(event => event.selected)
         .map(event => event.startDate)
         .reduce((earliest, date) => earliest < date ? earliest : date, Infinity) || null;
+    timelineStartYear = earliestStartDate;
 
     const latestEndDate = allNotSelected ? new Date(maxYear, 1, 1) : events
         .filter(event => event.selected)
         .map(event => event.endDate)
         .reduce((latest, date) => latest > date ? latest : date, -Infinity) || null;
+    timelineEndYear = latestEndDate;
 
     timelineStartSlider.attr("cx", timelineXScale(earliestStartDate));
     timelineEndSlider.attr("cx", timelineXScale(latestEndDate));
     updateRangeLine(earliestStartDate, latestEndDate);
     updateHighlight();
+    updateChordDiagrams();
 }

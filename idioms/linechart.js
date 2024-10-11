@@ -246,5 +246,6 @@ function createLineChart(data) {
     }
 
     updateHighlight();
+    updateChordDiagrams();
 }
 
