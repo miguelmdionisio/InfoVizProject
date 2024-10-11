@@ -82,7 +82,7 @@ function createTimeline() {
             } else if (d3.select(this).classed("end")) {
                 let newX = Math.max(timelineXScale(timelineStartYear), Math.min(width, event.x));
                 timelineEndYear = timelineXScale.invert(newX);
-                d3.select(this).attr("cx", timelineXScale(timelineEndYear));
+                d3.select(this).attr("cx", timelineXScale(getClosestYear(timelineEndYear)));
 
                 const sliderBounds = timelineEndSlider.node().getBoundingClientRect();
                 tooltip.html(`${getClosestYear(timelineEndYear)}`) // Update tooltip text

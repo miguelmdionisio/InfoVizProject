@@ -36,6 +36,10 @@ function createGanttChart(data) {
         .on("mouseup", function() {
             events.forEach((task) => task.selected = false);
             svg.selectAll(".hover-label").remove();
+
+            timelineStartYear = new Date(minYear, 1, 1);
+            timelineEndYear = new Date(maxYear, 1, 1);
+
             updateSlidersBasedOnEventSelection();
             updateBarSelectionColors();
         });
