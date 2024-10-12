@@ -46,7 +46,6 @@ let unemploymentYears;
 // COLORS
 
 const southernCountriesColor = "#D36135";
-// const northernCountriesColor = "#83BCA9";
 const northernCountriesColor = "#4C9079";
 
 const eventsColor = "#282B28";
@@ -58,8 +57,8 @@ const prePeriodColor = "#F2D0A9";
 const postPeriodColor = "#D88C9A";
 const timelineRangeLineColor = "#999";
 
-const mapCountryHoverColor = "black";
-const mapCountrySelectColor = "red";
+const mapCountryHoverColor = "#E5D4ED";
+const mapCountrySelectColor = "#6D72C3";
 const undefinedMapCountryColor = "#ccc";
 document.documentElement.style.setProperty('--mapCountryHoverColor', mapCountryHoverColor);
 document.documentElement.style.setProperty('--mapCountrySelectColor', mapCountrySelectColor);
