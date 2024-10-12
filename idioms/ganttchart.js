@@ -142,4 +142,5 @@ function updateSlidersBasedOnEventSelection() {
     updateRangeLine(earliestStartDate, latestEndDate);
     updateHighlight();
     updateChordDiagrams();
+    updateChoroplethMap();
 }

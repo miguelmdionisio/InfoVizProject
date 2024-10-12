@@ -8,9 +8,9 @@ function createLineChart(data) {
         .attr("transform", `translate(${lineChartMargin.left * 1.5}, ${lineChartMargin.top})`);
 
     // set up shadow highlights
-    createShadowHighlights("Default");
+    createShadowHighlights("Default", minYear, maxYear);
     for (const e of events) {
-        createShadowHighlights(e.name);
+        createShadowHighlights(e.name, e.startDate.getFullYear(), e.endDate.getFullYear());
     }
 
     // Scales
@@ -55,9 +55,6 @@ function createLineChart(data) {
     // Range selection brush function
     function brushed({ selection }) {
         if (selection === null) {
-            countries.forEach(d => d.selected = true);
-            lineChartSVG.selectAll(".line")
-                .style("opacity", 1.0);
             selectionOngoing = false;
             return;
         }
@@ -73,13 +70,11 @@ function createLineChart(data) {
                 });
 
                 if (intersects) {
-                    d.selected = true;
-                    d3.select(this).style("opacity", "1.0");
+                    addToListOfCountries(d.name, "selection");
                 }
                 else {
                     if (!shiftIsPressed || !selectionOngoing) {
-                        d.selected = false;
-                        d3.select(this).style("opacity", "0.1");
+                        removeFromListOfCountries(d.name, "selection");
                     }
                 }
             });
@@ -125,14 +120,10 @@ function createLineChart(data) {
         .attr("fill", "none")
         .style("opacity", 1.0)
         .on("mouseover", function (event, d) {
-            d3.select(this).style("cursor", "pointer").style("stroke-width", 3);
-            d3.select(this).style("opacity", "1.0");
+            addToListOfCountries(d.name, "hover");
         })
         .on("mouseleave", function (event, d) {
-            d3.select(this).style("stroke-width", "1.5px");
-            if (!d.selected) {
-                d3.select(this).style("opacity", "0.1");
-            }
+            removeFromListOfCountries(d.name, "hover");
         })
         .on("mousemove", function (event, d) { // Display tooltip with country name and closest gdp horizontally
             const [mouseX] = d3.pointer(event);
@@ -146,7 +137,7 @@ function createLineChart(data) {
 
                 d3.select(this)
                     .append("title")
-                    .text(`${d.name} \nYear: ${closestData.year}\nGDP: ${(closestData.gdp / 1e9).toFixed(3)} B$`);
+                    .text(`${d.name} \nYear: ${closestData.year}\nGDP: ${(closestData.gdp / 1e9).toFixed(3)}`);
             } else console.log("no data", closestYear);
 
             d3.select(this).style("opacity", "1.0");
@@ -154,28 +145,19 @@ function createLineChart(data) {
         .on("click", function (event, d) {
             if (!shiftIsPressed) {
                 dismissBrush();
-                countries.forEach(d => d.selected = false);
-                lineChartSVG.selectAll(".line")
-                    .style("opacity", 0.1);
+                emptyListOfCountries("selection");
             }
 
-            d.selected = !d.selected;
-            d3.select(this).style("stroke-width", "1.5px");
-            d3.select(this).style("opacity", d.selected ? "1.0" : "0.1");
-            selectionOngoing = d.selected;
+            const countryName = d.name;
+            if (countryIsInListOfCountries(countryName, "selection")) removeFromListOfCountries(countryName, "selection");
+            else addToListOfCountries(countryName, "selection");
+
+            selectionOngoing = countryIsInListOfCountries(countryName, "selection");
         });
 
     function dismissBrush() {
         brushGroup.call(brush.move, null);
     }
-
-    d3.select("#resetButton").on("click", () => {
-        countries.forEach(d => d.selected = true);
-        lineChartSVG.selectAll(".line")
-            .style("opacity", 1.0);
-        dismissBrush();
-        selectionOngoing = false;
-    });
 
     // Add zoom behavior for the y-axis
     const zoom = d3.zoom()
@@ -236,7 +218,7 @@ function createLineChart(data) {
     
         // Redefine y-axis and update lines
         lineChartSVG.select(".y.axis")
-            .call(d3.axisLeft(newYScale).tickFormat(d => `${d / 1e9} B$`));
+            .call(d3.axisLeft(newYScale).tickFormat(d => `${d / 1e9}`));
     
         lineChartSVG.selectAll(".line")
             .attr("d", d => line.y(d => newYScale(d.gdp))(d.values));
@@ -245,7 +227,44 @@ function createLineChart(data) {
 
     }
 
+    lineChartSVG.on("click", function(event) {
+        const isLineClick = d3.select(event.target).classed("line");
+        if (!isLineClick && !shiftIsPressed) emptyListOfCountries("selection");
+    });
+
     updateHighlight();
     updateChordDiagrams();
+    updateChoroplethMap();
 }
 
+function updateHoveredLines() {
+    const nodeList = lineChartSVG.selectAll(".line")._groups[0];
+    for (const node of nodeList) {
+        const countryData = node.__data__;
+        const countryName = countryData.name;
+
+        d3.select(node).style("stroke-width", "1.5px");
+
+        if (countryIsInListOfCountries(countryName, "hover")) {
+            d3.select(node).style("cursor", "pointer").style("stroke-width", 3);
+            d3.select(node).style("opacity", "1.0");
+        } else if ((selectedCountries.length != 0) && !countryIsInListOfCountries(countryName, "selection")) {
+            d3.select(node).style("opacity", "0.1");
+        }
+    }
+}
+
+function updateSelectedLines() {
+    const nodeList = lineChartSVG.selectAll(".line")._groups[0];
+    for (const node of nodeList) {
+        const countryData = node.__data__;
+        const countryName = countryData.name;
+
+        if (countryIsInListOfCountries(countryName, "selection")) {
+            d3.select(node).style("stroke-width", "1.5px");
+            d3.select(node).style("opacity", countryData.selected ? "1.0" : "0.1");
+        } else {
+            d3.select(node).style("opacity", (selectedCountries.length == 0) ? 1.0 : 0.1);
+        }
+    }
+}

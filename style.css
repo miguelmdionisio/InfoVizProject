@@ -102,3 +102,13 @@ button {
     text-transform: uppercase;
     font-size: 30px;
 }
+
+.country.hovered {
+    stroke: #000;
+    stroke-width: 2px;
+}
+
+.country.selected {
+    stroke: #F00;
+    stroke-width: 2px;
+}
