@@ -112,6 +112,16 @@ function createLineChart(data) {
     // Set up color scale for the lines
     const color = d3.scaleOrdinal(d3.schemeCategory10);
 
+    const tooltip = d3.select("body").append("div")
+    .attr("class", "tooltip")
+    .style("position", "absolute")
+    .style("background-color", "white")
+    .style("border", "1px solid #ccc")
+    .style("padding", "5px")
+    .style("border-radius", "4px")
+    .style("pointer-events", "none")
+    .style("opacity", 0);
+
     // Add line for each country
     lineChartSVG.selectAll(".line")
         .data(countries)
@@ -123,32 +133,28 @@ function createLineChart(data) {
         .attr("stroke-width", 1.5)
         .attr("fill", "none")
         .style("opacity", 1.0)
-        .on("mouseover", function (event, d) {
+        .on("mouseover", function(event, d) {
             d3.select(this).style("cursor", "pointer").style("stroke-width", 3);
-            d3.select(this).style("opacity", "1.0");
+            tooltip.style("opacity", 1);
         })
-        .on("mouseleave", function (event, d) {
+        .on("mousemove", function(event, d) {
+            const [mouseX, mouseY] = d3.pointer(event);
+            const closestYear = Math.round(xScale.invert(mouseX));
+            const closestData = d.values.find(v => v.year === closestYear);
+    
+            if (closestData) {
+                tooltip.html(`<strong>${d.name}</strong><br>Year: ${closestData.year}<br>GDP: ${(closestData.gdp / 1e9).toFixed(3)} B$`)
+                    .style("left", `${event.pageX + 10}px`)
+                    .style("top", `${event.pageY - 30}px`);
+            }
+        })
+        .on("mouseleave", function(event, d) {
             d3.select(this).style("stroke-width", "1.5px");
+            tooltip.style("opacity", 0);
+    
             if (!d.selected) {
                 d3.select(this).style("opacity", "0.1");
             }
-        })
-        .on("mousemove", function (event, d) {
-            const [mouseX] = d3.pointer(event);
-            const closestYear = Math.round(xScale.invert(mouseX));
-            const closestData = d.values.find(v => v.year === closestYear);
-
-            if (closestData) {
-                d3.select(this)
-                    .select("title")
-                    .remove();
-
-                d3.select(this)
-                    .append("title")
-                    .text(`${d.name} \nYear: ${closestData.year}\nGDP: ${(closestData.gdp / 1e9).toFixed(3)} B$`);
-            }
-
-            d3.select(this).style("opacity", "1.0");
         })
         .on("click", function (event, d) {
             if (!shiftIsPressed) {
@@ -185,6 +191,8 @@ function createLineChart(data) {
     lineChartSVG.selectAll(".line")
         .attr("clip-path", "url(#clip)");
 
+
+    // Zoom substitute to control Y Axis
     function createYaxisControl() {
         const yAxisControl = d3.select("#yAxisControls")
             .append("svg")
@@ -244,7 +252,7 @@ function createLineChart(data) {
                 tooltip.style("opacity", 0);
             })
         );
-
+        
         maxSlider.call(d3.drag()
             .on("drag", function (event) {
                 const newY = Math.min(yControlScale.range()[0], Math.max(event.y, yControlScale.range()[1]));
