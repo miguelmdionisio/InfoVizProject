@@ -295,6 +295,7 @@ document.addEventListener('keyup', (event) => {
 });
 
 function updateHighlight(startYear, endYear) {
+    updateChoroplethMap(startYear, endYear);
     const xScale = d3.scaleTime()
                     .domain([new Date(minYear, 1, 1), new Date(maxYear, 1, 1)])
                     .range([0, lineChartWidth]);

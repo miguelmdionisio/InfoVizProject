@@ -4,15 +4,21 @@
     <script src="https://d3js.org/d3.v7.js"></script>
     <script src="script.js"></script>
     <script src="./idioms/linechart.js"></script>
+    <script src="./idioms/choroplethmap.js"></script>
     <script src="./idioms/timeline.js"></script>
-    <script src="./idioms/events.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body onload="init()" class="h-screen overflow-y-hidden">
     <div class="flex flex-col h-full">
       <div class="flex flex-1">
-        <div class="flex-1 bg-blue-200">Choropleth Map</div>
+        <div class="flex-1">
+          <div class="flex">
+            <div class="visualization" id="choropleth"></div>
+            <div class="visualization" id="choroplethLabel"></div>
+          </div>
+        </div>
         <div class="flex-1 bg-blue-300">Chord Diagram 1</div>
         <div class="flex-1 bg-blue-400">Chord Diagram 2</div>
       </div>

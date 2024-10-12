@@ -98,6 +98,7 @@ function createTimeline() {
             }
             updateRangeLine();
             updateHighlight(getClosestYear(startYear), getClosestYear(endYear));
+            updateChoroplethMap();
         })
         .on('end', function (event) { // snap to closest year
             tooltip.style("opacity", 0); // Hide tooltip
