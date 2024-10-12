@@ -7,7 +7,7 @@ function createLineChart(data) {
         .append("svg")
         .attr("height", lineChartHeight + 50)
         .append("g")
-        .attr("transform", `translate(${lineChartMargin.left * 1.5}, ${lineChartMargin.top})`);
+        .attr("transform", `translate(${lineChartMargin.left}, ${lineChartMargin.top})`);
 
     // set up shadow highlights
     createShadowHighlights("Default", minYear, maxYear);
@@ -163,14 +163,6 @@ function createLineChart(data) {
         brushGroup.call(brush.move, null);
     }
 
-    // Add zoom behavior for the y-axis
-    const zoom = d3.zoom()
-        .scaleExtent([0.5, 100])
-        .translateExtent([[0, 0], [lineChartWidth, lineChartHeight]])
-        .on("zoom", zoomed);
-
-    lineChartSVG.call(zoom);
-
     lineChartSVG.append("defs").append("clipPath")
         .attr("id", "clip")
         .append("rect")
@@ -178,57 +170,99 @@ function createLineChart(data) {
         .attr("height", lineChartHeight);
 
     lineChartSVG.selectAll(".line")
-    .attr("clip-path", "url(#clip)");
+        .attr("clip-path", "url(#clip)");
 
 
-    let y0 = yScale.domain()[0];
-    let y1 = yScale.domain()[1];
-    //console.log("INITIAL Y0: ", (y0 / 1e9).toFixed(2), "Y1: ", (y1 / 1e9).toFixed(2));
-    let previousTransformK;
+    // Zoom substitute to control Y Axis
+    function createYaxisControl() {
+        const yAxisControl = d3.select("#yAxisControls")
+            .append("svg")
+            .attr("id", "yAxisControl")
+            .attr("width", 20)
+            .attr("height", lineChartHeight + 20)
+            .attr("transform", `translate(0, 10)`);
 
+        const yControlScale = d3.scaleLinear()
+            .domain([0, maxGDP])
+            .range([lineChartHeight, 0]);
 
-    function zoomed(event) {
-        const transform = event.transform;
-        let newY0;
+        const yControlAxis = d3.axisRight(yControlScale)
+            .ticks(6)
+            .tickFormat(d => "");
+
+        yAxisControl.append("g")
+            .attr("transform", `translate(30, 10)`)
+            .call(yControlAxis);
+
+        const sliderGroup = yAxisControl.append("g")
+            .attr("class", "sliders")
+            .attr("transform", `translate(0, 10)`);
+
+        const minSlider = sliderGroup.append("circle")
+            .attr("class", "slider start")
+            .attr("cx", 30)
+            .attr("cy", yControlScale(0))
+            .attr("r", 8)
+            .style("fill", prePeriodColor);
+
+        const maxSlider = sliderGroup.append("circle")
+            .attr("class", "slider end")
+            .attr("cx", 30)
+            .attr("cy", yControlScale(maxGDP))
+            .attr("r", 8)
+            .attr("fill", postPeriodColor);
+
+        // const tooltip = d3.select("#tooltip")
+        //     .append("div")
+        //     .attr("class", "tooltip")
+        //     .style("opacity", 0);
+
+        minSlider.call(d3.drag()
+            .on("drag", function (event) {
+                const newY = Math.min(yControlScale.range()[0], Math.max(event.y, yControlScale.range()[1]));
+                d3.select(this).attr("cy", newY);
+                updateYAxisFromSliders();
+
+                // const sliderBounds = minSlider.node().getBoundingClientRect();
+                // tooltip.html(`${(yControlScale.invert(newY) / 1e9).toFixed(0)}B`)
+                //     .style("left", `${sliderBounds.left + window.scrollX + 10}px`)
+                //     .style("top", `${sliderBounds.top + window.scrollY - 30}px`)
+                //     .style("opacity", 1);
+            })
+            .on("end", function () {
+                // tooltip.style("opacity", 0);
+            })
+        );
         
-        const [mouseX, mouseY] = d3.pointer(event);
-        const centerY = yScale.invert(mouseY);
-        
-        const newYScale = transform.rescaleY(yScale);
-        //console.log("newYScale", (newYScale.domain()[0] / 1e9).toFixed(2), (newYScale.domain()[1] / 1e9).toFixed(2));
-    
+        maxSlider.call(d3.drag()
+            .on("drag", function (event) {
+                const newY = Math.min(yControlScale.range()[0], Math.max(event.y, yControlScale.range()[1]));
+                d3.select(this).attr("cy", newY);
+                updateYAxisFromSliders();
 
-        //top of bottom 10% of y axis
-        var bottom10 = newYScale.domain()[1] * 0.1;
-        // console.log("bottom10", bottom10);
-        // console.log("mouse em", (centerY/1e9).toFixed(2));
-        
-        if (centerY < bottom10) {
-            newY0 = y0;
-        } else {newY0 = centerY - (centerY - newYScale.domain()[0]) / (transform.k);}
+                // const sliderBounds = maxSlider.node().getBoundingClientRect();
+                // tooltip.html(`${(yControlScale.invert(newY) / 1e9).toFixed(0)}B`)
+                //     .style("left", `${sliderBounds.left + window.scrollX + 10}px`)
+                //     .style("top", `${sliderBounds.top + window.scrollY - 30}px`)
+                //     .style("opacity", 1);
+            })
+            .on("end", function () {
+                // tooltip.style("opacity", 0);
+            })
+        );
 
-        let newY1 = centerY + (newYScale.domain()[1] - centerY) / (transform.k);
+        function updateYAxisFromSliders() {
+            const newMinY = yControlScale.invert(minSlider.attr("cy"));
+            const newMaxY = yControlScale.invert(maxSlider.attr("cy"));
 
-        y0 = newY0;
-        y1 = newY1;
-        //console.log("zoom on value", (newYScale.invert(mouseY)/1e9).toFixed(2));
-        // console.log("Y0: ", (newY0 / 1e9).toFixed(2), "Y1: ", (newY1 / 1e9).toFixed(2));
-    
-        const clampedYDomain = [
-            Math.max(newY0, yScale.domain()[0]),
-            Math.min(newY1, yScale.domain()[1])
-        ];
-        newYScale.domain(clampedYDomain);
-    
-        // Redefine y-axis and update lines
-        lineChartSVG.select(".y.axis")
-            .call(d3.axisLeft(newYScale).tickFormat(d => `${d / 1e9}`));
-    
-        lineChartSVG.selectAll(".line")
-            .attr("d", d => line.y(d => newYScale(d.gdp))(d.values));
+            if (newMinY < newMaxY) {
+                yScale.domain([newMinY, newMaxY]);
+                lineChartSVG.select(".y.axis").call(yAxis);
 
-        previousTransformK = transform.k;
-
+                lineChartSVG.selectAll(".line")
+                    .attr("d", d => line(d.values));
+            }
+        }
     }
 
     lineChartSVG.on("click", function(event) {
@@ -236,6 +270,12 @@ function createLineChart(data) {
         if (!isLineClick && !shiftIsPressed) emptyListOfCountries("selection");
     });
 
+    lineChartSVG.on("click", function(event) {
+        const isLineClick = d3.select(event.target).classed("line");
+        if (!isLineClick && !shiftIsPressed) emptyListOfCountries("selection");
+    });
+
+    createYaxisControl(); 
     updateHighlight();
     updateChordDiagrams();
     updateChoroplethMap();

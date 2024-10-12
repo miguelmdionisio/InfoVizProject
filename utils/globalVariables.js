@@ -6,6 +6,7 @@ let shiftIsPressed = false;
 
 const minYear = 1991;
 const maxYear = 2018;
+const maxGDP = 4456080000000;
 
 let timelineStartSlider, timelineEndSlider;
 let timelineXScale;

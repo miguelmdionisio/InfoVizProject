@@ -27,7 +27,7 @@ function createGanttChart(data) {
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
-        .attr("transform", `translate(${margin.left * 6}, ${margin.top})`);
+        .attr("transform", `translate(${margin.left * 4}, ${margin.top})`);
 
     svg.append("rect")
         .attr("width", width)

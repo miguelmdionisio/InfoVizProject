@@ -10,7 +10,7 @@ function createTimeline() {
         .append("svg")
         .append("g")
         .attr("height", 50)
-        .attr("transform", `translate(${margin.left * 6}, ${margin.top})`);
+        .attr("transform", `translate(${margin.left * 4}, ${margin.top})`);
 
     timelineXScale = d3.scaleTime()
         .domain([new Date(minYear, 0, 1), new Date(maxYear, 0, 1)])
