@@ -4,16 +4,17 @@ function updateHighlight() {
     for (const e of events) {
         if (e.selected) {
             someSelected = true;
-            moveShadowHighlight(e.name);
+            showOrHideShadowHighlight(e.name);
         } else {
-            moveShadowHighlight(e.name, false);
+            showOrHideShadowHighlight(e.name, false);
         }
     }
 
     if (!someSelected) {
-        moveShadowHighlight("Default");
+        showOrHideShadowHighlight("Default");
+        moveHighLight("Default", getClosestYear(timelineStartYear), getClosestYear(timelineEndYear));
     } else {
-        moveShadowHighlight("Default", false);
+        showOrHideShadowHighlight("Default", false);
     }
 
 };
@@ -27,6 +28,10 @@ function createShadowHighlights(nickname, start, end) {
     const xEnd = xScale(new Date(Math.min(maxYear, end), 1, 1));
     const xStartPre = xScale(new Date(Math.max(minYear, start - 2), 1, 1));
     const xEndPost = xScale(new Date(Math.min(maxYear, end + 2), 1, 1));
+
+    if ((xEnd - xStart) < 0) {
+        return;
+    }
 
     lineChartSVG.append("rect")
         .attr("class", "highlight")
@@ -59,8 +64,7 @@ function createShadowHighlights(nickname, start, end) {
         .attr("id", "postHighlight" + nickname.replace(/\s+/g, ''));
 };
 
-function moveShadowHighlight(nickname, show = true) {
-
+function showOrHideShadowHighlight(nickname, show = true) {
     const highlightMainElement = document.getElementById("mainHighlight" + nickname.replace(/\s+/g, ''));
     const highlightPreElement = document.getElementById("preHighlight" + nickname.replace(/\s+/g, ''));
     const highlightPostElement = document.getElementById("postHighlight" + nickname.replace(/\s+/g, ''));
@@ -82,4 +86,47 @@ function moveShadowHighlight(nickname, show = true) {
         .duration(350)
         .ease(d3.easePolyOut)
         .attr("height", show ? lineChartHeight : 0);
+}
+
+function moveHighLight(nickname, start, end) {
+    const xScale = d3.scaleTime()
+    .domain([new Date(minYear, 1, 1), new Date(maxYear, 1, 1)])
+    .range([0, lineChartWidth]);
+
+    const xStart = xScale(new Date(Math.max(minYear, start), 1, 1));
+    const xEnd = xScale(new Date(Math.min(maxYear, end), 1, 1));
+    const xStartPre = xScale(new Date(Math.max(minYear, start - 2), 1, 1));
+    const xEndPost = xScale(new Date(Math.min(maxYear, end + 2), 1, 1));
+
+    if ((xEnd - xStart) < 0) {
+        return;
+    }
+
+    const highlightMainElement = document.getElementById("mainHighlight" + nickname.replace(/\s+/g, ''));
+    const highlightPreElement = document.getElementById("preHighlight" + nickname.replace(/\s+/g, ''));
+    const highlightPostElement = document.getElementById("postHighlight" + nickname.replace(/\s+/g, ''));
+
+    d3.select(highlightMainElement)
+        .transition()
+        .duration(350)
+        .ease(d3.easePolyOut)
+        .attr("x", xStart)
+        .attr("width", xEnd - xStart)
+        .attr("height", lineChartHeight);
+
+    d3.select(highlightPreElement)
+        .transition()
+        .duration(350)
+        .ease(d3.easePolyOut)
+        .attr("x", xStartPre)
+        .attr("width", xStart - xStartPre)
+        .attr("height", lineChartHeight);
+
+    d3.select(highlightPostElement)
+        .transition()
+        .duration(350)
+        .ease(d3.easePolyOut)
+        .attr("x", xEnd)
+        .attr("width", xEndPost - xEnd)
+        .attr("height", lineChartHeight);
 }

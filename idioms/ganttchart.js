@@ -144,3 +144,9 @@ function updateSlidersBasedOnEventSelection() {
     updateChordDiagrams();
     updateChoroplethMap();
 }
+
+function deselectAllEvents() {
+    events.forEach(e => {
+        e.selected = false;
+    });
+}

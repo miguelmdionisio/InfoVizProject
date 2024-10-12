@@ -81,6 +81,7 @@ function createTimeline() {
                     .style("top", `${sliderBounds.top + window.scrollY - 30}px`)
                     .style("opacity", 1);
             }
+            deselectAllEvents();
             updateRangeLine(timelineStartYear, timelineEndYear);
             updateHighlight();
         })

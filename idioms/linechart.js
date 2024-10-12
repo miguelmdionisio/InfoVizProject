@@ -1,3 +1,5 @@
+let lineTooltip;
+
 function createLineChart(data) {
 
     // Append SVG to the chart div
@@ -12,6 +14,13 @@ function createLineChart(data) {
     for (const e of events) {
         createShadowHighlights(e.name, e.startDate.getFullYear(), e.endDate.getFullYear());
     }
+
+    // setup tooltip
+    const tooltip = d3.select("#lineTooltip").append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0) // start hidden
+        .style("left", (window.innerWidth / 2) + "px")
+        .style("top", (window.innerHeight / 2) + "px");
 
     // Scales
     const xScale = d3.scaleLinear().range([0, lineChartWidth]);
@@ -105,9 +114,6 @@ function createLineChart(data) {
         .attr("text-anchor", "end")
         .text("GDP (Billions $)");
 
-    // Set up color scale for the lines
-    const color = d3.scaleOrdinal(d3.schemeCategory10);
-
     // Add line for each country
     lineChartSVG.selectAll(".line")
         .data(countries)
@@ -124,23 +130,21 @@ function createLineChart(data) {
         })
         .on("mouseleave", function (event, d) {
             removeFromListOfCountries(d.name, "hover");
+            tooltip.style("opacity", 0);
         })
-        .on("mousemove", function (event, d) { // Display tooltip with country name and closest gdp horizontally
+        .on("mousemove", function (event, d) { // display tooltip with country name and closest gdp horizontally
             const [mouseX] = d3.pointer(event);
             const closestYear = Math.round(xScale.invert(mouseX));
             const closestData = d.values.find(v => v.year === closestYear);
 
             if (closestData) {
-                d3.select(this)
-                    .select("title")
-                    .remove();
+                tooltip
+                    .style("opacity", 1)
+                    .html(d.name + ", " + closestData.year + "<br>GDP: " + (closestData.gdp / 1e9).toFixed(0) + "B$") // update tooltip text
+                    .style("left", (event.pageX + 5) + "px")
+                    .style("top", (event.pageY - 28) + "px");
 
-                d3.select(this)
-                    .append("title")
-                    .text(`${d.name} \nYear: ${closestData.year}\nGDP: ${(closestData.gdp / 1e9).toFixed(3)}`);
-            } else console.log("no data", closestYear);
-
-            d3.select(this).style("opacity", "1.0");
+            } else tooltip.style("opacity", 0);
         })
         .on("click", function (event, d) {
             if (!shiftIsPressed) {

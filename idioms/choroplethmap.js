@@ -1,6 +1,6 @@
 let legend, legendTextTop, legendTextBottom;
-let countryTooltip;
 let mapSVG;
+let avgUnemployment;
 
 function createChoroplethMap(data) {
 
@@ -15,7 +15,7 @@ function createChoroplethMap(data) {
         .attr("width", choroplethMapWidth)
         .attr("height", choroplethMapHeight);
     
-    const avgUnemployment = data.reduce((acc, dataPoint) => {
+    avgUnemployment = data.reduce((acc, dataPoint) => {
         let sum = 0;
         let count = 0;
     
@@ -34,7 +34,7 @@ function createChoroplethMap(data) {
 
     const minAvg = Math.floor(Math.min(...Object.values(avgUnemployment)));
     const maxAvg = Math.ceil(Math.max(...Object.values(avgUnemployment)));
-    const colorScale = d3.scaleSequential(d3.interpolateBlues)
+    const colorScale = d3.scaleSequential(d3.interpolatePurples)
         .domain([minAvg, maxAvg]);
 
     mapSVG.selectAll("path")
@@ -53,16 +53,17 @@ function createChoroplethMap(data) {
             addToListOfCountries(countryName, "hover");
 
             const avgUnemploymentValue = avgUnemployment[countryName];
-            // countryTooltip = d3.select("body").append("div")
-            //     .attr("class", "tooltip")
-            //     .style("left", (event.pageX + 5) + "px")
-            //     .style("top", (event.pageY - 28) + "px")
-            //     .html(countryName + ": " + avgUnemploymentValue.toFixed(2) + "%");
+            tooltip
+                .style("opacity", 1)
+                .html(countryName + ": " + avgUnemploymentValue.toFixed(2) + "%") // update tooltip text
+                .style("left", (event.pageX + 5) + "px")
+                .style("top", (event.pageY - 28) + "px");
         })
         .on("mouseout", function(d) {
             const country = d.srcElement.__data__;
             const countryName = country.properties.NAME;
             removeFromListOfCountries(countryName, "hover");
+            tooltip.style("opacity", 0);
         })
         .on("mouseup", function(d) {
             const country = d.srcElement.__data__;
@@ -78,6 +79,11 @@ function createChoroplethMap(data) {
         const isCountryClick = d3.select(event.target).classed("country");
         if (!isCountryClick && !shiftIsPressed) emptyListOfCountries("selection");
     });
+
+    // setup tooltip
+    const tooltip = d3.select("#mapTooltip").append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0);
 
     // LEGEND STUFF
 
@@ -134,7 +140,7 @@ function updateChoroplethMap() {
         return;
     }
 
-    const avgUnemployment = unemploymentData.reduce((acc, dataPoint) => {
+    avgUnemployment = unemploymentData.reduce((acc, dataPoint) => {
         let sum = 0;
         let count = 0;
     
@@ -153,7 +159,7 @@ function updateChoroplethMap() {
 
     const minAvg = Math.min(...Object.values(avgUnemployment));
     const maxAvg = Math.max(...Object.values(avgUnemployment));
-    const colorScale = d3.scaleSequential(d3.interpolateBlues)
+    const colorScale = d3.scaleSequential(d3.interpolatePurples)
         .domain([minAvg, maxAvg]);
 
     d3.selectAll("path.country")
@@ -198,10 +204,8 @@ function updateHoveredMapCountries() {
         d3.select(node).classed("hovered", false);
 
         if (countryIsInListOfCountries(countryName)) {
-            // const avgUnemploymentValue = avgUnemployment[countryName];
             d3.select(node)
                 .classed("hovered", true);
-            // TODO: tooltips
         }
     }
 }
