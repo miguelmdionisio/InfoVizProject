@@ -45,7 +45,7 @@ function createChoroplethMap(data) {
         .attr("fill", function(d) {
             const countryName = d.properties.NAME;
             const value = avgUnemployment[countryName];
-            return value ? colorScale(value) : "#ccc";
+            return value ? colorScale(value) : undefinedMapCountryColor;
         })
         .on("mouseover", function(d) {
             const country = d.srcElement.__data__;
@@ -162,7 +162,7 @@ function updateChoroplethMap() {
     .attr("fill", function(d) {
         const countryName = d.properties.NAME;
         const value = avgUnemployment[countryName];
-        return value ? colorScale(value) : "#ccc";
+        return value ? colorScale(value) : undefinedMapCountryColor;
     });
 
     // update the legend

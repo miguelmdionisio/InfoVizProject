@@ -41,3 +41,37 @@ const chordDiagramsRibbons = []; // 0 = immigration, 1 = emigration
 let unemploymentData;
 let filteredMapFeatures;
 let unemploymentYears;
+
+
+// COLORS
+
+const southernCountriesColor = "#9E6240";
+const northernCountriesColor = "#206087";
+
+const eventsColor = "#456990";
+const highlightedEventsColor = "#92b0d1";
+document.documentElement.style.setProperty('--eventsColor', eventsColor);
+
+const duringPeriodColor = "#D3D3D3";
+const prePeriodColor = "#F0D2D1";
+const postPeriodColor = "#8EB19D";
+const timelineRangeLineColor = "#999";
+
+const mapCountryHoverColor = "black";
+const mapCountrySelectColor = "red";
+const undefinedMapCountryColor = "#ccc";
+document.documentElement.style.setProperty('--mapCountryHoverColor', mapCountryHoverColor);
+document.documentElement.style.setProperty('--mapCountrySelectColor', mapCountrySelectColor);
+
+const tooltipBackgroundColor = "#fff";
+const tooltipBorderColor = "#ccc";
+document.documentElement.style.setProperty('--tooltipBackgroundColor', tooltipBackgroundColor);
+document.documentElement.style.setProperty('--tooltipBorderColor', tooltipBorderColor);
+
+const axesColor = "#000";
+document.documentElement.style.setProperty('--axesColor', axesColor);
+
+const boxSelectionBackgroundColor = "#add8e6";
+const boxSelectionBorderColor = "#1E90FF";
+document.documentElement.style.setProperty('--boxSelectionBackgroundColor', boxSelectionBackgroundColor);
+document.documentElement.style.setProperty('--boxSelectionBorderColor', boxSelectionBorderColor);

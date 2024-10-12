@@ -30,7 +30,7 @@ function createShadowHighlights(nickname, start, end) {
 
     lineChartSVG.append("rect")
         .attr("class", "highlight")
-        .attr("fill", "#d3d3d3")
+        .attr("fill", duringPeriodColor)
         .attr("opacity", 0.5)
         .attr("x", xStart)
         .attr("y", 0)
@@ -40,7 +40,7 @@ function createShadowHighlights(nickname, start, end) {
 
     lineChartSVG.append("rect")
         .attr("class", "highlight-pre")
-        .attr("fill", "#F0D2D1")
+        .attr("fill", prePeriodColor)
         .attr("opacity", 0.5)
         .attr("x", xStartPre)
         .attr("y", 0)
@@ -50,7 +50,7 @@ function createShadowHighlights(nickname, start, end) {
     
     lineChartSVG.append("rect")
         .attr("class", "highlight-post")
-        .attr("fill", "#8EB19D")
+        .attr("fill", postPeriodColor)
         .attr("opacity", 0.5)
         .attr("x", xEnd)
         .attr("y", 0)

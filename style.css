@@ -27,8 +27,8 @@ svg {
     font-size: 12px;
 }
 .selection {
-    fill: rgba(173, 216, 230, 0.5);
-    stroke: #1E90FF;
+    fill: var(--boxSelectionBackgroundColor);
+    stroke: var(--boxSelectionBorderColor);
     stroke-width: 1px;
     pointer-events: none;
 }
@@ -50,7 +50,7 @@ button {
 .axis path,
 .axis line {
     fill: none;
-    stroke: #000;
+    stroke: var(--axesColor);
     shape-rendering: crispEdges;
 }
 
@@ -60,8 +60,8 @@ button {
 
 .tooltip {
     position: absolute;
-    background-color: #fff;
-    border: 1px solid #ccc;
+    background-color: var(--tooltipBackgroundColor);
+    border: 1px solid var(--tooltipBorderColor);
     border-radius: 4px;
     padding: 5px;
     pointer-events: none;
@@ -79,7 +79,7 @@ button {
 }
 
 .ganttbar {
-    fill: #456990;
+    fill: var(--eventsColor);
     rx: 5; /* to make rounded corners on the Gantt bars */
     ry: 5;
 }
@@ -104,11 +104,11 @@ button {
 }
 
 .country.hovered {
-    stroke: #000;
+    stroke: var(--mapCountryHoverColor);
     stroke-width: 2px;
 }
 
 .country.selected {
-    stroke: #F00;
+    stroke: var(--mapCountrySelectColor);
     stroke-width: 2px;
 }

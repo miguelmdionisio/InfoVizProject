@@ -32,14 +32,14 @@ function createTimeline() {
         .attr("cx", timelineXScale(timelineStartYear))
         .attr("cy", height / 2)
         .attr("r", 8)
-        .style("fill", "#F0D2D1");
+        .style("fill", prePeriodColor);
 
     timelineEndSlider = sliderGroup.append("circle")
         .attr("class", "slider end")
         .attr("cx", timelineXScale(timelineEndYear))
         .attr("cy", height / 2)
         .attr("r", 8)
-        .style("fill", "#8EB19D");
+        .style("fill", postPeriodColor);
 
     const tooltip = d3.select("#tooltip").append("div")
         .attr("class", "tooltip")
@@ -51,7 +51,7 @@ function createTimeline() {
         .attr("x2", timelineXScale(timelineEndYear))
         .attr("y1", height / 2)
         .attr("y2", height / 2)
-        .attr("stroke", "#999")
+        .attr("stroke", timelineRangeLineColor)
         .attr("stroke-width", 4);
 
     d3.selectAll(".slider").call(d3.drag()

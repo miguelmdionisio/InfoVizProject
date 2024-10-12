@@ -84,7 +84,7 @@ function createGanttChart(data) {
             d3.select(this)
                 .transition()
                 .duration(200)
-                .style("fill", "#92b0d1");
+                .style("fill", highlightedEventsColor);
     
             if (!svg.select("#hoverLabel" + d.name.replace(/\s+/g, '')).node()) {
                 // hover label
@@ -102,7 +102,7 @@ function createGanttChart(data) {
             d3.select(this)
             .transition()
             .duration(200)
-            .style("fill", d.selected ? "#92b0d1" : "#456990");
+            .style("fill", d.selected ? highlightedEventsColor : eventsColor);
 
             events.forEach((task) => {
                 if (!task.selected) {
@@ -116,7 +116,7 @@ function createGanttChart(data) {
         .transition()
         .duration(200)
         .style("fill", function(d) {
-            return d.selected ? "#92b0d1" : "#456990";
+            return d.selected ? highlightedEventsColor : eventsColor;
         });
     }
 
