@@ -232,6 +232,7 @@ function createLineChart(data) {
             .on("drag", function (event) {
                 const newY = Math.min(yControlScale.range()[0], Math.max(event.y, yControlScale.range()[1]));
                 d3.select(this).attr("cy", newY);
+                updateYAxisFromSliders();
 
                 const sliderBounds = minSlider.node().getBoundingClientRect();
                 tooltip.html(`${(yControlScale.invert(newY) / 1e9).toFixed(0)}B`)
@@ -241,7 +242,6 @@ function createLineChart(data) {
             })
             .on("end", function () {
                 tooltip.style("opacity", 0);
-                updateYAxisFromSliders();
             })
         );
 
@@ -249,6 +249,7 @@ function createLineChart(data) {
             .on("drag", function (event) {
                 const newY = Math.min(yControlScale.range()[0], Math.max(event.y, yControlScale.range()[1]));
                 d3.select(this).attr("cy", newY);
+                updateYAxisFromSliders();
 
                 const sliderBounds = maxSlider.node().getBoundingClientRect();
                 tooltip.html(`${(yControlScale.invert(newY) / 1e9).toFixed(0)}B`)
@@ -258,7 +259,6 @@ function createLineChart(data) {
             })
             .on("end", function () {
                 tooltip.style("opacity", 0);
-                updateYAxisFromSliders();
             })
         );
 
