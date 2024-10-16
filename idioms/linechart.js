@@ -28,7 +28,7 @@ function createLineChart(data) {
 
     // Axis definitions
     const xAxis = d3.axisBottom(xScale).tickFormat(d3.format("d"));
-    const yAxis = d3.axisLeft(yScale).tickFormat(d => `${d / 1e9}`);
+    const yAxis = d3.axisLeft(yScale).tickFormat(d => `${d / 1e12}`);
 
     // Line generator
     const line = d3.line()
@@ -41,15 +41,17 @@ function createLineChart(data) {
     const countries = data.map(d => {
         return {
             name: d["Country Name"],
-            values: years.map(year => {
-                return { year: year, gdp: +d[year] };
-            }),
+            values: years
+                .filter(year => year >= minYear && year <= maxYear)
+                .map(year => {
+                    return { year: year, gdp: +d[year] };
+                }),
             selected: true
         };
     });
 
     // Set domain for xScale and yScale
-    xScale.domain(d3.extent(years));
+    xScale.domain(d3.extent(years.filter(year => year >= minYear && year <= maxYear)));
     yScale.domain([0, d3.max(countries, c => d3.max(c.values, v => v.gdp))]);
 
     // Setup range selection brush and attach it to svg
@@ -99,7 +101,7 @@ function createLineChart(data) {
         .append("text")
         .attr("fill", axesColor)
         .attr("x", lineChartWidth)
-        .attr("y", 15)
+        .attr("y", 28)
         .attr("text-anchor", "end")
         .text("Year");
 
@@ -109,10 +111,10 @@ function createLineChart(data) {
         .call(yAxis)
         .append("text")
         .attr("fill", axesColor)
-        .attr("x", 6)
+        .attr("x", 20)
         .attr("dy", "-0.5em")
         .attr("text-anchor", "end")
-        .text("GDP (Billions $)");
+        .text("GDP (K Billions, $)");
 
     // Add line for each country
     lineChartSVG.selectAll(".line")
@@ -203,14 +205,14 @@ function createLineChart(data) {
             .attr("cx", 30)
             .attr("cy", yControlScale(0))
             .attr("r", 8)
-            .style("fill", prePeriodColor);
+            .style("fill", timelineRangeLineColor);
 
         const maxSlider = sliderGroup.append("circle")
             .attr("class", "slider end")
             .attr("cx", 30)
             .attr("cy", yControlScale(maxGDP))
             .attr("r", 8)
-            .attr("fill", postPeriodColor);
+            .attr("fill", timelineRangeLineColor);
 
         // const tooltip = d3.select("#tooltip")
         //     .append("div")
@@ -274,6 +276,14 @@ function createLineChart(data) {
         const isLineClick = d3.select(event.target).classed("line");
         if (!isLineClick && !shiftIsPressed) emptyListOfCountries("selection");
     });
+
+    // // country color legend
+    // var svg = d3.select("#countryLegend");
+    // svg.append("circle").attr("cx",200).attr("cy",130).attr("r", 6).style("fill", "#69b3a2");
+    // svg.append("circle").attr("cx",200).attr("cy",160).attr("r", 6).style("fill", "#404080");
+    // svg.append("text").attr("x", 220).attr("y", 130).text("variable A").style("font-size", "15px").attr("alignment-baseline","middle");
+    // svg.append("text").attr("x", 220).attr("y", 160).text("variable B").style("font-size", "15px").attr("alignment-baseline","middle");
+
 
     createYaxisControl(); 
     updateHighlight();

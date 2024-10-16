@@ -50,6 +50,10 @@ function createChoroplethMap(data) {
         .on("mouseover", function(d) {
             const country = d.srcElement.__data__;
             const countryName = country.properties.NAME;
+            if (!EUCountryNames.includes(countryName)) {
+                return;
+            }
+
             addToListOfCountries(countryName, "hover");
 
             const avgUnemploymentValue = avgUnemployment[countryName];

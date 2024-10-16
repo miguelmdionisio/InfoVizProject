@@ -60,7 +60,7 @@ function createTimeline() {
         })
         .on("drag", function (event, d) {
             if (d3.select(this).classed("start")) {
-                let newX = Math.min(timelineXScale(timelineEndYear), Math.max(0, event.x));
+                let newX = Math.min(timelineXScale(new Date(timelineEndYear.getFullYear() - 1, 1, 1)), Math.max(0, event.x));
                 timelineStartYear = timelineXScale.invert(newX);
                 d3.select(this).attr("cx", timelineXScale(timelineStartYear));
 
@@ -71,9 +71,9 @@ function createTimeline() {
                     .style("opacity", 1);
 
             } else if (d3.select(this).classed("end")) {
-                let newX = Math.max(timelineXScale(timelineStartYear), Math.min(width, event.x));
+                let newX = Math.max(timelineXScale(new Date(timelineStartYear.getFullYear() + 1, 1, 1)), Math.min(width, event.x));
                 timelineEndYear = timelineXScale.invert(newX);
-                d3.select(this).attr("cx", timelineXScale(getClosestYear(timelineEndYear)));
+                d3.select(this).attr("cx", timelineXScale(timelineEndYear));
 
                 const sliderBounds = timelineEndSlider.node().getBoundingClientRect();
                 tooltip.html(`${getClosestYear(timelineEndYear)}`) // update tooltip text

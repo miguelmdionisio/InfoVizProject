@@ -35,7 +35,7 @@ function createGanttChart(data) {
         .attr("fill", "transparent")
         .on("mouseup", function() {
             events.forEach((task) => task.selected = false);
-            svg.selectAll(".hover-label").remove();
+            // svg.selectAll(".hover-label").remove();
 
             timelineStartYear = new Date(minYear, 1, 1);
             timelineEndYear = new Date(maxYear, 1, 1);
@@ -63,6 +63,13 @@ function createGanttChart(data) {
         .attr("y", d => rowScale(d.row))
         .attr("width", d => x(d.endDate) - x(d.startDate))
         .attr("height", rowScale.bandwidth())
+        // .append("text")
+        //     // .attr("class", "hover-label")
+        //     .attr("id", d => "hoverLabel" + d.name.replace(/\s+/g, ''))
+        //     .attr("x", d => x(d.startDate))
+        //     .attr("y", d => rowScale(d.row) - 5)
+        //     .attr("font-size", 14)
+        //     .text(d => d.name)
 
         .on("mouseup", function(event, d) {
             if (!shiftIsPressed) {
@@ -73,11 +80,11 @@ function createGanttChart(data) {
             updateSlidersBasedOnEventSelection();
             updateBarSelectionColors();
 
-            events.forEach((task) => {
-                if (!task.selected) {
-                    d3.select("#hoverLabel" + task.name.replace(/\s+/g, '')).remove();
-                }
-            });
+            // events.forEach((task) => {
+            //     if (!task.selected) {
+            //         d3.select("#hoverLabel" + task.name.replace(/\s+/g, '')).remove();
+            //     }
+            // });
         })
 
         .on("mouseover", function(event, d) {
@@ -86,16 +93,16 @@ function createGanttChart(data) {
                 .duration(200)
                 .style("fill", highlightedEventsColor);
     
-            if (!svg.select("#hoverLabel" + d.name.replace(/\s+/g, '')).node()) {
-                // hover label
-                svg.append("text")
-                    .attr("class", "hover-label")
-                    .attr("id", "hoverLabel" + d.name.replace(/\s+/g, ''))
-                    .attr("x", x(d.startDate))
-                    .attr("y", rowScale(d.row) - 5)
-                    .attr("font-size", 14)
-                    .text(d.name);
-            }
+            // if (!svg.select("#hoverLabel" + d.name.replace(/\s+/g, '')).node()) {
+            //     // hover label
+            //     svg.append("text")
+            //         .attr("class", "hover-label")
+            //         .attr("id", "hoverLabel" + d.name.replace(/\s+/g, ''))
+            //         .attr("x", x(d.startDate))
+            //         .attr("y", rowScale(d.row) - 5)
+            //         .attr("font-size", 14)
+            //         .text(d.name);
+            // }
         })
 
         .on("mouseout", function(event, d) {
@@ -104,12 +111,23 @@ function createGanttChart(data) {
             .duration(200)
             .style("fill", d.selected ? highlightedEventsColor : eventsColor);
 
-            events.forEach((task) => {
-                if (!task.selected) {
-                    d3.select("#hoverLabel" + task.name.replace(/\s+/g, '')).remove();
-                }
-            });
+            // events.forEach((task) => {
+            //     if (!task.selected) {
+            //         d3.select("#hoverLabel" + task.name.replace(/\s+/g, '')).remove();
+            //     }
+            // });
         });
+
+    svg.selectAll(".bar-text")
+        .data(events)
+        .enter()
+        .append("text")
+        .attr("class", "hover-label")
+        .attr("id", d => "hoverLabel" + d.name.replace(/\s+/g, ''))
+        .attr("x", d => x(d.startDate))
+        .attr("y", d => rowScale(d.row) - 5)  // Adjust the y position if necessary
+        .attr("font-size", 14)
+        .text(d => d.name);
 
     function updateBarSelectionColors() {
         svg.selectAll(".ganttbar")

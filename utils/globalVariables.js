@@ -31,6 +31,7 @@ let events = [];
 
 const southernCountries = ["Portugal", "Spain", "Italy", "Slovenia", "Croatia", "Hungary", "Romania", "Bulgaria", "Greece", "Turkey", "Cyprus", "Malta"];
 const southernCountryCodes = ["POR", "SPN", "ITA", "SLV", "CRO", "HUN", "ROM", "BUL", "GRC", "TUR", "CYP", "MLT"];
+let EUCountryNames = [];
 
 let chordDiagramsData;
 const chordDiagramsOuterRadius = Math.min(chordDiagramWidth, chordDiagramHeight) / 2 - 40;
@@ -58,8 +59,10 @@ const prePeriodColor = "#F2D0A9";
 const postPeriodColor = "#D88C9A";
 const timelineRangeLineColor = "#999";
 
-const mapCountryHoverColor = "#E5D4ED";
-const mapCountrySelectColor = "#6D72C3";
+// const mapCountryHoverColor = "#E5D4ED";
+// const mapCountrySelectColor = "#6D72C3";
+const mapCountryHoverColor = "#000000";
+const mapCountrySelectColor = "#000000";
 const undefinedMapCountryColor = "#ccc";
 document.documentElement.style.setProperty('--mapCountryHoverColor', mapCountryHoverColor);
 document.documentElement.style.setProperty('--mapCountrySelectColor', mapCountrySelectColor);
