@@ -84,6 +84,10 @@ button {
     ry: 5;
 }
 
+.ganttbar:hover {
+    cursor: pointer;
+}
+
 .oswald-small {
     font-family: "Oswald", sans-serif;
     font-optical-sizing: auto;
