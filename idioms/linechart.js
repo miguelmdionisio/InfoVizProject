@@ -112,7 +112,7 @@ function createLineChart(data) {
         .attr("x", 20)
         .attr("dy", "-0.5em")
         .attr("text-anchor", "end")
-        .text("GDP (K Millions, $)");
+        .text("GDP (K Billions, $)");
 
     // Add line for each country
     lineChartSVG.selectAll(".line")
@@ -140,7 +140,7 @@ function createLineChart(data) {
             if (closestData) {
                 tooltip
                     .style("opacity", 1)
-                    .html(d.name + ", " + closestData.year + "<br>GDP: " + (closestData.gdp / 1e9).toFixed(0) + "B$") // update tooltip text
+                    .html(d.name + ", " + closestData.year + "<br>GDP: " + (closestData.gdp / 1e12).toFixed(0) + "K B$") // update tooltip text
                     .style("left", (event.pageX + 5) + "px")
                     .style("top", (event.pageY - 28) + "px");
 
