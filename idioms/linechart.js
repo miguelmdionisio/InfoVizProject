@@ -84,9 +84,7 @@ function createLineChart(data) {
                     addToListOfCountries(d.name, "selection");
                 }
                 else {
-                    if (!shiftIsPressed || !selectionOngoing) {
-                        removeFromListOfCountries(d.name, "selection");
-                    }
+                    if (!shiftIsPressed && !selectionOngoing) removeFromListOfCountries(d.name, "selection");
                 }
             });
 
@@ -149,8 +147,9 @@ function createLineChart(data) {
             } else tooltip.style("opacity", 0);
         })
         .on("click", function (event, d) {
+            console.log("here");
+            dismissBrush();
             if (!shiftIsPressed) {
-                dismissBrush();
                 emptyListOfCountries("selection");
             }
 
@@ -268,11 +267,7 @@ function createLineChart(data) {
     }
 
     lineChartSVG.on("click", function(event) {
-        const isLineClick = d3.select(event.target).classed("line");
-        if (!isLineClick && !shiftIsPressed) emptyListOfCountries("selection");
-    });
-
-    lineChartSVG.on("click", function(event) {
+        dismissBrush();
         const isLineClick = d3.select(event.target).classed("line");
         if (!isLineClick && !shiftIsPressed) emptyListOfCountries("selection");
     });
