@@ -6,7 +6,7 @@ function createChoroplethMap(data) {
 
     const projection = d3.geoMercator()
         .center([10, 58])
-        .scale(340)
+        .scale(310)
         .translate([choroplethMapWidth / 2, choroplethMapHeight / 2]);
     
     const path = d3.geoPath().projection(projection);
@@ -93,7 +93,7 @@ function createChoroplethMap(data) {
 
     const legendWidth = 20;
     const legendHeight = choroplethMapHeight;
-    const legendX = choroplethMapWidth - 45;
+    const legendX = choroplethMapWidth - 10;
     const legendY = (choroplethMapHeight - legendHeight) / 2 + 20;
 
     const defs = mapSVG.append("defs");

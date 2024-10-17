@@ -40,6 +40,17 @@ function init() {
     d3.csv("../data/gdp_clean.csv")
     .then((data) => {
         createLineChart(data);
+
+        const colorScale = d3.scaleOrdinal()
+            .domain(['Northern', 'Southern'])
+            .range([northernCountriesColor, southernCountriesColor]);
+        const swatchesElement = Swatches(colorScale, {
+            columns: 2,
+            swatchSize: 20,
+            format: d => d
+        });
+        document.getElementById('swatches-container').appendChild(swatchesElement);
+
     });
     createTimeline();
 }

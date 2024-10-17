@@ -55,8 +55,8 @@ const highlightedEventsColor = "#6D736D";
 document.documentElement.style.setProperty('--eventsColor', eventsColor);
 
 const duringPeriodColor = "#D3D3D3";
-const prePeriodColor = "#F2D0A9";
-const postPeriodColor = "#D88C9A";
+const prePeriodColor = "#7b94b8";
+const postPeriodColor = "#32507a";
 const timelineRangeLineColor = "#999";
 
 // const mapCountryHoverColor = "#E5D4ED";

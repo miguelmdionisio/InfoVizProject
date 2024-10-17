@@ -2,7 +2,7 @@ function createGanttChart(data) {
 
     const margin = { top: 0, right: 20, bottom: 0, left: 20 };
     const width = window.innerWidth - 200;
-    const height = 100  - margin.top - margin.bottom;
+    const height = 80  - margin.top - margin.bottom;
 
     let eventIdx = 0;
     for (const item of data) {
@@ -125,7 +125,7 @@ function createGanttChart(data) {
         .attr("class", "hover-label")
         .attr("id", d => "hoverLabel" + d.name.replace(/\s+/g, ''))
         .attr("x", d => x(d.startDate))
-        .attr("y", d => rowScale(d.row) - 5)  // Adjust the y position if necessary
+        .attr("y", d => rowScale(d.row) - 3)  // Adjust the y position if necessary
         .attr("font-size", 14)
         .text(d => d.name);
 
