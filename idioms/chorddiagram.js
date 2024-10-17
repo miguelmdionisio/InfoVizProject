@@ -35,8 +35,15 @@ function createChordDiagram(flowDirection) {
         .selectAll("path")
         .data(chords.groups)
         .enter().append("path")
-        .style("fill", d => chordDiagramsColors(d.index))
-        .style("stroke", d => d3.rgb(chordDiagramsColors(d.index)).darker())
+        .style("fill", d => {
+            const isSouthern = southernCountryCodes.includes(countries[d.index]);
+            return isSouthern ? southernCountriesColor : northernCountriesColor;
+        })
+        .style("stroke", d => {
+            const isSouthern = southernCountryCodes.includes(countries[d.index]);
+            const color = isSouthern ? southernCountriesColor : northernCountriesColor
+            return d3.rgb(color).darker();
+        })
         .attr("d", arc);
 
     chordDiagramsRibbons[globalVarsId] = svg.append("g")
@@ -45,8 +52,18 @@ function createChordDiagram(flowDirection) {
         .data(chords)
         .enter().append("path")
         .attr("d", d3.ribbon().radius(chordDiagramsInnerRadius))
-        .style("fill", d => chordDiagramsColors(d.target.index))
-        .style("stroke", d => d3.rgb(chordDiagramsColors(d.target.index)).darker());
+        .style("fill", d => {
+            console.log(d);
+            const isSouthern = southernCountryCodes.includes(countries[d.source.index]);
+            return isSouthern ? southernCountriesColor : northernCountriesColor;
+            // chordDiagramsColors(d.target.index)
+        })
+        .style("stroke", d => {
+            const isSouthern = southernCountryCodes.includes(countries[d.source.index]);
+            const color = isSouthern ? southernCountriesColor : northernCountriesColor
+            return d3.rgb(color).darker();
+            // d3.rgb(chordDiagramsColors(d.target.index)).darker()
+        });
 
     svg.append("g").selectAll("text")
         .data(chords.groups)
