@@ -112,7 +112,7 @@ function createLineChart(data) {
         .attr("x", 20)
         .attr("dy", "-0.5em")
         .attr("text-anchor", "end")
-        .text("GDP (K Billions, $)");
+        .text("GDP (K Millions, $)");
 
     // Add line for each country
     lineChartSVG.selectAll(".line")
