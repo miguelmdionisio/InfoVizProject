@@ -88,6 +88,16 @@ button {
     cursor: pointer;
 }
 
+.orange-description{
+    color: #D36135;
+    font-weight: bold;
+}
+
+.green-description{
+    color: #4C9079;
+    font-weight: bold;
+}
+
 .oswald-small {
     font-family: "Oswald", sans-serif;
     font-optical-sizing: auto;
