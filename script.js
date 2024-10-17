@@ -39,6 +39,7 @@ function init() {
 
     d3.csv("../data/gdp_clean.csv")
     .then((data) => {
+        data = data.filter(dataItem => EUCountryNames.includes(dataItem["Country Name"]));
         createLineChart(data);
 
         const colorScale = d3.scaleOrdinal()
