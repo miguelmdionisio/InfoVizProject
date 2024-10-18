@@ -35,10 +35,13 @@ function init() {
             const originCode = row['Origin Country Code'];
             const originName = row['Origin Country'];
             countryCodesToNames[originCode] = originName;
+            countryNamesToCodes[originName] = originCode;
     
             const destCode = row['Dest Country Code'];
             const destName = row['Dest Country'];
             countryCodesToNames[destCode] = destName;
+            countryNamesToCodes[destName] = destCode;
+
         });
 
         createChordDiagram("inflow");

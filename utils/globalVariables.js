@@ -33,6 +33,7 @@ const southernCountries = ["Portugal", "Spain", "Italy", "Slovenia", "Croatia", 
 const southernCountryCodes = ["POR", "SPN", "ITA", "SLV", "CRO", "HUN", "ROM", "BUL", "GRC", "TUR", "CYP", "MLT"];
 let EUCountryNames = [];
 let countryCodesToNames = {};
+let countryNamesToCodes = {};
 
 let chordDiagramsData;
 const chordDiagramsOuterRadius = Math.min(chordDiagramWidth, chordDiagramHeight) / 2 - 40;

@@ -46,7 +46,12 @@ function createChordDiagram(flowDirection) {
             const color = isSouthern ? southernCountriesColor : northernCountriesColor
             return d3.rgb(color).darker();
         })
-        .attr("d", arc);
+        .attr("d", arc)
+        .on("mouseover", (event, d) => {
+        })
+        .on("mouseout", (event, d) => {
+        });
+
         // // hover animations
         // .on("mouseover", (event, d) => {
         //     chordDiagramsRibbons[globalVarsId]
@@ -192,18 +197,33 @@ function updateChordDiagrams() {
 
 function updateHoveredArcs() {
     if (hoveredCountries.length == 0 && (selectedCountries.length == 0)) {
-        for (const listOfChords of chordDiagramsArcs) {
-            for (const chord of listOfChords) {    
+        for (let i = 0; i < chordDiagramsArcs.length; i++) {
+            const listOfChords = chordDiagramsArcs[i];
+            for (const chord of listOfChords) {
                 d3.select(chord)
                     .transition()
                     .duration(500)
                     .style("opacity", 1);
             }
+            chordDiagramsRibbons[i]
+                .transition()
+                .duration(500)
+                .style("opacity", 1);
         }
         return;
     }
 
-    for (const listOfChords of chordDiagramsArcs) {
+    const hoveredIndexes = hoveredCountries.map(hc => {
+        const hcCode = countryNamesToCodes[hc];
+        return countries.indexOf(hcCode);
+    });
+    const selectedIndexes = selectedCountries.map(hc => {
+        const hcCode = countryNamesToCodes[hc];
+        return countries.indexOf(hcCode);
+    });
+
+    for (let i = 0; i < chordDiagramsArcs.length; i++) {
+        const listOfChords = chordDiagramsArcs[i];
         for (const chord of listOfChords) {
             const chordData = chord.__data__;
             const countryCode = countries[chordData.index];
@@ -214,10 +234,26 @@ function updateHoveredArcs() {
                     .transition()
                     .duration(200)
                     .style("opacity", 0.1);
+
+                chordDiagramsRibbons[i].filter(r =>
+                    (r.source.index == chordData.index && !hoveredIndexes.includes(r.target.index) && !selectedIndexes.includes(r.target.index))
+                    || (r.target.index == chordData.index && !hoveredIndexes.includes(r.source.index) && !selectedIndexes.includes(r.source.index))
+                )
+                    .transition()
+                    .duration(200)
+                    .style("opacity", 0.1);
             }
 
             if (countryIsInListOfCountries(countryName, "hover")) {
                 d3.select(chord)
+                    .transition()
+                    .duration(200)
+                    .style("opacity", 1);
+
+                chordDiagramsRibbons[i].filter(r => 
+                    (r.source.index == chordData.index && !hoveredIndexes.includes(r.target.index) && !selectedIndexes.includes(r.target.index))
+                    || (r.target.index == chordData.index && !hoveredIndexes.includes(r.source.index) && !selectedIndexes.includes(r.source.index))
+                )
                     .transition()
                     .duration(200)
                     .style("opacity", 1);
@@ -227,7 +263,17 @@ function updateHoveredArcs() {
 }
 
 function updateSelectedArcs() {
-    for (const listOfChords of chordDiagramsArcs) {
+    const hoveredIndexes = hoveredCountries.map(hc => {
+        const hcCode = countryNamesToCodes[hc];
+        return countries.indexOf(hcCode);
+    });
+    const selectedIndexes = selectedCountries.map(hc => {
+        const hcCode = countryNamesToCodes[hc];
+        return countries.indexOf(hcCode);
+    });
+
+    for (let i = 0; i < chordDiagramsArcs.length; i++) {
+        const listOfChords = chordDiagramsArcs[i];
         for (const chord of listOfChords) {
             const chordData = chord.__data__;
             const countryCode = countries[chordData.index];
@@ -238,8 +284,24 @@ function updateSelectedArcs() {
                     .transition()
                     .duration(200)
                     .style("opacity", 1);
+
+                chordDiagramsRibbons[i].filter(r =>
+                    (r.source.index == chordData.index && !hoveredIndexes.includes(r.target.index) && !selectedIndexes.includes(r.target.index))
+                    || (r.target.index == chordData.index && !hoveredIndexes.includes(r.source.index) && !selectedIndexes.includes(r.source.index))
+                )
+                    .transition()
+                    .duration(200)
+                    .style("opacity", 1);
             } else {
                 d3.select(chord)
+                    .transition()
+                    .duration(500)
+                    .style("opacity", (selectedCountries.length == 0) ? 1.0 : 0.1);
+                
+                chordDiagramsRibbons[i].filter(r =>
+                    (r.source.index == chordData.index && !hoveredIndexes.includes(r.target.index) && !selectedIndexes.includes(r.target.index))
+                    || (r.target.index == chordData.index && !hoveredIndexes.includes(r.source.index) && !selectedIndexes.includes(r.source.index))
+                )
                     .transition()
                     .duration(500)
                     .style("opacity", (selectedCountries.length == 0) ? 1.0 : 0.1);
