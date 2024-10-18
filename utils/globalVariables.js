@@ -1,7 +1,6 @@
 const hoveredCountries = createObservableArray([], onHoverChange);
 const selectedCountries = createObservableArray([], onSelectChange);
 
-let selectionOngoing = false;
 let shiftIsPressed = false;
 
 const minYear = 1991;

@@ -1,4 +1,5 @@
 let lineTooltip;
+let previouslySelectedCountries;
 
 function createLineChart(data) {
 
@@ -45,8 +46,7 @@ function createLineChart(data) {
                 .filter(year => year >= minYear && year <= maxYear)
                 .map(year => {
                     return { year: year, gdp: +d[year] };
-                }),
-            selected: true
+                })
         };
     });
 
@@ -58,15 +58,21 @@ function createLineChart(data) {
     const brush = d3.brush()
         .extent([[0, 0], [lineChartWidth, lineChartHeight]])
         .on("start brush end", brushed)
+        .on("start", brushStart)
         .keyModifiers(false);
     const brushGroup = lineChartSVG.append("g")
         .attr("class", "brush")
         .call(brush);
 
+    function brushStart() {
+        if (shiftIsPressed) {
+            previouslySelectedCountries = [...selectedCountries];
+        } else previouslySelectedCountries = [];
+    }
+    
     // Range selection brush function
     function brushed({ selection }) {
         if (selection === null) {
-            selectionOngoing = false;
             return;
         }
 
@@ -84,11 +90,9 @@ function createLineChart(data) {
                     addToListOfCountries(d.name, "selection");
                 }
                 else {
-                    if (!shiftIsPressed && !selectionOngoing) removeFromListOfCountries(d.name, "selection");
+                    if (!previouslySelectedCountries.includes(d.name)) removeFromListOfCountries(d.name, "selection");
                 }
             });
-
-        selectionOngoing = true;
     }
 
     // Add x-axis to the chart
@@ -156,8 +160,6 @@ function createLineChart(data) {
             const countryName = d.name;
             if (countryIsInListOfCountries(countryName, "selection")) removeFromListOfCountries(countryName, "selection");
             else addToListOfCountries(countryName, "selection");
-
-            selectionOngoing = countryIsInListOfCountries(countryName, "selection");
         });
 
     function dismissBrush() {
@@ -311,7 +313,7 @@ function updateSelectedLines() {
 
         if (countryIsInListOfCountries(countryName, "selection")) {
             d3.select(node).style("stroke-width", "1.5px");
-            d3.select(node).style("opacity", countryData.selected ? "1.0" : "0.1");
+            d3.select(node).style("opacity", "1.0");
         } else {
             d3.select(node).style("opacity", (selectedCountries.length == 0) ? 1.0 : 0.1);
         }
