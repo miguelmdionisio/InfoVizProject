@@ -44,7 +44,25 @@ function createChordDiagram(flowDirection) {
             const color = isSouthern ? southernCountriesColor : northernCountriesColor
             return d3.rgb(color).darker();
         })
-        .attr("d", arc);
+        .attr("d", arc)
+
+        // hover animations
+        .on("mouseover", (event, d) => {
+            chordDiagramsRibbons[globalVarsId]
+                .transition()
+                .duration(200)
+                .style("opacity", 0.1);
+            chordDiagramsRibbons[globalVarsId].filter(r => r.source.index === d.index || r.target.index === d.index)
+                .transition()
+                .duration(200)
+                .style("opacity", 1);
+        })
+        .on("mouseout", (event, d) => {
+            chordDiagramsRibbons[globalVarsId]
+                .transition()
+                .duration(500)
+                .style("opacity", 0.5);
+        });
 
     chordDiagramsRibbons[globalVarsId] = svg.append("g")
         .attr("fill-opacity", 0.5)
@@ -60,6 +78,24 @@ function createChordDiagram(flowDirection) {
             const isSouthern = southernCountryCodes.includes(countries[d.source.index]);
             const color = isSouthern ? southernCountriesColor : northernCountriesColor
             return d3.rgb(color).darker();
+        })
+
+        // hover animations
+        .on("mouseover", (event, d) => {
+            chordDiagramsRibbons[globalVarsId]
+                .transition()
+                .duration(200)
+                .style("opacity", 0.1);
+            d3.select(event.currentTarget)
+                .transition()
+                .duration(200)
+                .style("opacity", 1);
+        })
+        .on("mouseout", (event, d) => {
+            chordDiagramsRibbons[globalVarsId]
+                .transition()
+                .duration(500)
+                .style("opacity", 0.5);
         });
 
     svg.append("g").selectAll("text")
