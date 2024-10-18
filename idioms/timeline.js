@@ -41,7 +41,7 @@ function createTimeline() {
         .attr("r", 8)
         .style("fill", postPeriodColor);
 
-    const tooltip = d3.select("#tooltip").append("div")
+    const tooltip = d3.select("#timelineTooltip").append("div")
         .attr("class", "tooltip")
         .style("opacity", 0); // start hidden
 
