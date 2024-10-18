@@ -190,7 +190,8 @@ function updateHoveredArcs() {
                 d3.select(chord)
                     .transition()
                     .duration(500)
-                    .style("opacity", 1);
+                    .style("opacity", 1)
+                    .style("cursor", "pointer");
             }
             chordDiagramsRibbons[i]
                 .transition()
