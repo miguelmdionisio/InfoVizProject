@@ -11,6 +11,16 @@ function createChordDiagram(flowDirection) {
         .append("g")
         .attr("transform", "translate(" + (chordDiagramWidth / 2 + 20) + "," + (chordDiagramHeight / 2 + 20) + ")");
 
+    // background rect to detect clicks outside the chord diagrams
+    svg.append("rect")
+        .attr("width", chordDiagramWidth)
+        .attr("height", chordDiagramHeight)
+        .attr("transform", "translate(" + (-chordDiagramWidth / 2 - 20) + "," + (-chordDiagramHeight / 2 - 20) + ")")
+        .style("fill", "transparent")
+        .on("click", () => {
+            if (!shiftIsPressed) emptyListOfCountries("selection");
+        });
+
     const filteredData = chordDiagramsData.filter(d => {
         return +d.Year >= timelineStartYear.getFullYear() && +d.Year <= timelineEndYear.getFullYear()
     });
@@ -48,27 +58,24 @@ function createChordDiagram(flowDirection) {
         })
         .attr("d", arc)
         .on("mouseover", (event, d) => {
+            const countryCode = countries[d.index];
+            const countryName = countryCodesToNames[countryCode];
+            addToListOfCountries(countryName, "hover");
         })
         .on("mouseout", (event, d) => {
+            const countryCode = countries[d.index];
+            const countryName = countryCodesToNames[countryCode];
+            removeFromListOfCountries(countryName, "hover");
+        })
+        .on("mouseup", (event, d) => {
+            const countryCode = countries[d.index];
+            const countryName = countryCodesToNames[countryCode];
+            if (countryIsInListOfCountries(countryName, "selection")) removeFromListOfCountries(countryName, "selection");
+            else {
+                if (!shiftIsPressed) emptyListOfCountries("selection");
+                addToListOfCountries(countryName, "selection");
+            }
         });
-
-        // // hover animations
-        // .on("mouseover", (event, d) => {
-        //     chordDiagramsRibbons[globalVarsId]
-        //         .transition()
-        //         .duration(200)
-        //         .style("opacity", 0.1);
-        //     chordDiagramsRibbons[globalVarsId].filter(r => r.source.index === d.index || r.target.index === d.index)
-        //         .transition()
-        //         .duration(200)
-        //         .style("opacity", 1);
-        // })
-        // .on("mouseout", (event, d) => {
-        //     chordDiagramsRibbons[globalVarsId]
-        //         .transition()
-        //         .duration(500)
-        //         .style("opacity", 0.5);
-        // });
 
     chordDiagramsRibbons[globalVarsId] = svg.append("g")
         .attr("fill-opacity", 0.5)
@@ -85,23 +92,6 @@ function createChordDiagram(flowDirection) {
             const color = isSouthern ? southernCountriesColor : northernCountriesColor
             return d3.rgb(color).darker();
         });
-        // // hover animations
-        // .on("mouseover", (event, d) => {
-        //     chordDiagramsRibbons[globalVarsId]
-        //         .transition()
-        //         .duration(200)
-        //         .style("opacity", 0.1);
-        //     d3.select(event.currentTarget)
-        //         .transition()
-        //         .duration(200)
-        //         .style("opacity", 1);
-        // })
-        // .on("mouseout", (event, d) => {
-        //     chordDiagramsRibbons[globalVarsId]
-        //         .transition()
-        //         .duration(500)
-        //         .style("opacity", 0.5);
-        // });
 
     svg.append("g").selectAll("text")
         .data(chords.groups)
@@ -116,7 +106,6 @@ function createChordDiagram(flowDirection) {
         })
         .attr("text-anchor", function(d) { return d.angle > Math.PI ? "end" : null; })
         .text(d => d.name);
-
 }
 
 function updateChordDiagrams() {
@@ -149,8 +138,6 @@ function updateChordDiagrams() {
             .outerRadius(chordDiagramsOuterRadius);
 
         const ribbon = d3.ribbon().radius(chordDiagramsInnerRadius);
-
-        // console.log("chords", chords);
 
         // animate arcs
         chordDiagramsArcs[globalVarsId]
