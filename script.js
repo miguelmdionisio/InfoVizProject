@@ -30,6 +30,17 @@ function init() {
         chordDiagramsData = data.filter(dataItem =>
             EUCountryNames.includes(dataItem["Dest Country"]) && EUCountryNames.includes(dataItem["Origin Country"])
         );
+
+        chordDiagramsData.forEach(row => {
+            const originCode = row['Origin Country Code'];
+            const originName = row['Origin Country'];
+            countryCodesToNames[originCode] = originName;
+    
+            const destCode = row['Dest Country Code'];
+            const destName = row['Dest Country'];
+            countryCodesToNames[destCode] = destName;
+        });
+
         createChordDiagram("inflow");
         createChordDiagram("outflow");
     });

@@ -1,3 +1,5 @@
+let countries;
+
 function createChordDiagram(flowDirection) {
     const divId = (flowDirection == "inflow") ? "#chordDiagramImmigration" : "#chordDiagramEmigration";
     const globalVarsId = +(flowDirection != "inflow");
@@ -13,7 +15,7 @@ function createChordDiagram(flowDirection) {
         return +d.Year >= timelineStartYear.getFullYear() && +d.Year <= timelineEndYear.getFullYear()
     });
     
-    const countries = Array.from(new Set(filteredData.map(d => d["Origin Country Code"]).concat(filteredData.map(d => d["Dest Country Code"]))));
+    countries = Array.from(new Set(filteredData.map(d => d["Origin Country Code"]).concat(filteredData.map(d => d["Dest Country Code"]))));
     const matrix = Array.from({ length: countries.length }, () => Array(countries.length).fill(0));
     filteredData.forEach(d => {
         const originIndex = countries.indexOf(d["Origin Country Code"]);
@@ -44,25 +46,24 @@ function createChordDiagram(flowDirection) {
             const color = isSouthern ? southernCountriesColor : northernCountriesColor
             return d3.rgb(color).darker();
         })
-        .attr("d", arc)
-
-        // hover animations
-        .on("mouseover", (event, d) => {
-            chordDiagramsRibbons[globalVarsId]
-                .transition()
-                .duration(200)
-                .style("opacity", 0.1);
-            chordDiagramsRibbons[globalVarsId].filter(r => r.source.index === d.index || r.target.index === d.index)
-                .transition()
-                .duration(200)
-                .style("opacity", 1);
-        })
-        .on("mouseout", (event, d) => {
-            chordDiagramsRibbons[globalVarsId]
-                .transition()
-                .duration(500)
-                .style("opacity", 0.5);
-        });
+        .attr("d", arc);
+        // // hover animations
+        // .on("mouseover", (event, d) => {
+        //     chordDiagramsRibbons[globalVarsId]
+        //         .transition()
+        //         .duration(200)
+        //         .style("opacity", 0.1);
+        //     chordDiagramsRibbons[globalVarsId].filter(r => r.source.index === d.index || r.target.index === d.index)
+        //         .transition()
+        //         .duration(200)
+        //         .style("opacity", 1);
+        // })
+        // .on("mouseout", (event, d) => {
+        //     chordDiagramsRibbons[globalVarsId]
+        //         .transition()
+        //         .duration(500)
+        //         .style("opacity", 0.5);
+        // });
 
     chordDiagramsRibbons[globalVarsId] = svg.append("g")
         .attr("fill-opacity", 0.5)
@@ -78,25 +79,24 @@ function createChordDiagram(flowDirection) {
             const isSouthern = southernCountryCodes.includes(countries[d.source.index]);
             const color = isSouthern ? southernCountriesColor : northernCountriesColor
             return d3.rgb(color).darker();
-        })
-
-        // hover animations
-        .on("mouseover", (event, d) => {
-            chordDiagramsRibbons[globalVarsId]
-                .transition()
-                .duration(200)
-                .style("opacity", 0.1);
-            d3.select(event.currentTarget)
-                .transition()
-                .duration(200)
-                .style("opacity", 1);
-        })
-        .on("mouseout", (event, d) => {
-            chordDiagramsRibbons[globalVarsId]
-                .transition()
-                .duration(500)
-                .style("opacity", 0.5);
         });
+        // // hover animations
+        // .on("mouseover", (event, d) => {
+        //     chordDiagramsRibbons[globalVarsId]
+        //         .transition()
+        //         .duration(200)
+        //         .style("opacity", 0.1);
+        //     d3.select(event.currentTarget)
+        //         .transition()
+        //         .duration(200)
+        //         .style("opacity", 1);
+        // })
+        // .on("mouseout", (event, d) => {
+        //     chordDiagramsRibbons[globalVarsId]
+        //         .transition()
+        //         .duration(500)
+        //         .style("opacity", 0.5);
+        // });
 
     svg.append("g").selectAll("text")
         .data(chords.groups)
@@ -125,7 +125,7 @@ function updateChordDiagrams() {
         const filteredData = chordDiagramsData.filter(d => {
             return +d.Year >= timelineStartYear.getFullYear() && +d.Year <= timelineEndYear.getFullYear()
         });
-        const countries = Array.from(new Set(filteredData.map(d => d["Origin Country Code"]).concat(filteredData.map(d => d["Dest Country Code"]))));
+        countries = Array.from(new Set(filteredData.map(d => d["Origin Country Code"]).concat(filteredData.map(d => d["Dest Country Code"]))));
         const matrix = Array.from({ length: countries.length }, () => Array(countries.length).fill(0));
         filteredData.forEach(d => {
             const originIndex = countries.indexOf(d["Origin Country Code"]);
@@ -187,5 +187,63 @@ function updateChordDiagrams() {
             .text(d => countries[d.index]);
 
         labels.exit().remove();
+    }
+}
+
+function updateHoveredArcs() {
+    if (hoveredCountries.length == 0 && (selectedCountries.length == 0)) {
+        for (const listOfChords of chordDiagramsArcs) {
+            for (const chord of listOfChords) {    
+                d3.select(chord)
+                    .transition()
+                    .duration(500)
+                    .style("opacity", 1);
+            }
+        }
+        return;
+    }
+
+    for (const listOfChords of chordDiagramsArcs) {
+        for (const chord of listOfChords) {
+            const chordData = chord.__data__;
+            const countryCode = countries[chordData.index];
+            const countryName = countryCodesToNames[countryCode];
+
+            if (!countryIsInListOfCountries(countryName, "selection")) {
+                d3.select(chord)
+                    .transition()
+                    .duration(200)
+                    .style("opacity", 0.1);
+            }
+
+            if (countryIsInListOfCountries(countryName, "hover")) {
+                d3.select(chord)
+                    .transition()
+                    .duration(200)
+                    .style("opacity", 1);
+            }
+        }
+    }
+}
+
+function updateSelectedArcs() {
+    for (const listOfChords of chordDiagramsArcs) {
+        for (const chord of listOfChords) {
+            const chordData = chord.__data__;
+            const countryCode = countries[chordData.index];
+            const countryName = countryCodesToNames[countryCode];
+
+            if (countryIsInListOfCountries(countryName, "selection")) {
+                d3.select(chord)
+                    .transition()
+                    .duration(200)
+                    .style("opacity", 1);
+            } else {
+                d3.select(chord)
+                    .transition()
+                    .duration(500)
+                    .style("opacity", (selectedCountries.length == 0) ? 1.0 : 0.1);
+            }
+        }
     }
 }

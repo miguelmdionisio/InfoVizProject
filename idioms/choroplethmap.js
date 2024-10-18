@@ -75,7 +75,9 @@ function createChoroplethMap(data) {
             if (countryIsInListOfCountries(countryName, "selection")) removeFromListOfCountries(countryName, "selection");
             else {
                 if (!shiftIsPressed) emptyListOfCountries("selection");
-                addToListOfCountries(countryName, "selection");
+                if (EUCountryNames.includes(countryName)) {
+                    addToListOfCountries(countryName, "selection");
+                }
             }
         });
 

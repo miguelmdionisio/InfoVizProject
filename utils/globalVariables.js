@@ -32,6 +32,7 @@ let events = [];
 const southernCountries = ["Portugal", "Spain", "Italy", "Slovenia", "Croatia", "Hungary", "Romania", "Bulgaria", "Greece", "Turkey", "Cyprus", "Malta"];
 const southernCountryCodes = ["POR", "SPN", "ITA", "SLV", "CRO", "HUN", "ROM", "BUL", "GRC", "TUR", "CYP", "MLT"];
 let EUCountryNames = [];
+let countryCodesToNames = {};
 
 let chordDiagramsData;
 const chordDiagramsOuterRadius = Math.min(chordDiagramWidth, chordDiagramHeight) / 2 - 40;

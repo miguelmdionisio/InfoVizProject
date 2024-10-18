@@ -55,9 +55,11 @@ function createObservableArray(initialArray, callback) {
 const onHoverChange = (arr) => {
     updateHoveredLines();
     updateHoveredMapCountries();
+    updateHoveredArcs();
 };
 
 const onSelectChange = (arr) => {
     updateSelectedLines();
     updateSelectedMapCountries();
+    updateSelectedArcs();
 };
