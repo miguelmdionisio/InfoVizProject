@@ -52,6 +52,11 @@ function createObservableArray(initialArray, callback) {
     return observableArray;
 }
 
+function toggleBorder() {
+    showBorder = !showBorder;
+    updateBorderCountries();
+}
+
 const onHoverChange = (arr) => {
     updateHoveredLines();
     updateHoveredMapCountries();

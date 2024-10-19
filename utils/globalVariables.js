@@ -2,6 +2,7 @@ const hoveredCountries = createObservableArray([], onHoverChange);
 const selectedCountries = createObservableArray([], onSelectChange);
 
 let shiftIsPressed = false;
+let showBorder = true;
 
 const minYear = 1991;
 const maxYear = 2018;

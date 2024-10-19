@@ -55,7 +55,16 @@ function createChoroplethMap(data) {
       const value = avgUnemployment[countryName];
       return value ? colorScale(value) : undefinedMapCountryColor;
     })
-    .attr("stroke", "gray")
+    .attr("stroke", function (d) {
+      if (showBorder) {
+        if (southernCountries.includes(d.properties.NAME)) {
+          return southernCountriesColor;
+        } else if (EUCountryNames.includes(d.properties.NAME)) {
+          return northernCountriesColor;
+        } else return "gray";
+      } else return "gray";
+    })
+    .attr("stroke-width", 1.5)
     .on("mouseover", function (d) {
       const country = d.srcElement.__data__;
       const countryName = country.properties.NAME;
@@ -102,15 +111,15 @@ function createChoroplethMap(data) {
   //    [choroplethMapWidth, choroplethMapHeight+100],
   //  ])
   //  .on("zoom", zoomed);
-//
+  //
   //// Apply zoom behavior to the SVG element
   //mapSVG.call(zoom);
-//
+  //
   //// Function to handle the zoom event
   //function zoomed(event) {
   //  d3.selectAll("path.country").attr("transform", event.transform);
   //}
-//
+  //
   //mapSVG.on("click", function (event) {
   //  const isCountryClick = d3.select(event.target).classed("country");
   //  if (!isCountryClick && !shiftIsPressed) emptyListOfCountries("selection");
@@ -267,4 +276,21 @@ function updateSelectedMapCountries() {
       d3.select(node).classed("selected", true);
     else d3.select(node).classed("selected", false);
   }
+}
+
+function updateBorderCountries() { 
+
+  d3.selectAll("path.country")
+    .transition() // add transition for smooth updating
+    .duration(500) // duration of the transition
+    .attr("stroke", function (d) {
+      if (showBorder) {
+        if (southernCountries.includes(d.properties.NAME)) {
+          return southernCountriesColor;
+        } else if (EUCountryNames.includes(d.properties.NAME)) {
+          return northernCountriesColor;
+        } else return "gray";
+      } else return "gray";
+    });
+
 }
