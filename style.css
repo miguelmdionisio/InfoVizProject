@@ -127,10 +127,10 @@ button {
 
 .country.hovered {
     stroke: var(--mapCountryHoverColor);
-    stroke-width: 2px;
+    stroke-width: 3px;
 }
 
 .country.selected {
     stroke: var(--mapCountrySelectColor);
-    stroke-width: 2px;
+    stroke-width: 3px;
 }
