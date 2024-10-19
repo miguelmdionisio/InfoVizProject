@@ -89,7 +89,7 @@ function createChoroplethMap(data) {
       removeFromListOfCountries(countryName, "hover");
       tooltip.style("opacity", 0);
     })
-    .on("mouseup", function (d) {
+    .on("click", function (d) {
       const country = d.srcElement.__data__;
       const countryName = country.properties.NAME;
       if (countryIsInListOfCountries(countryName, "selection"))
@@ -103,27 +103,27 @@ function createChoroplethMap(data) {
     });
 
   // Create zoom behavior for the map
-  //const zoom = d3
-  //  .zoom()
-  //  .scaleExtent([1, 8])
-  //  .translateExtent([
-  //    [0, 0],
-  //    [choroplethMapWidth, choroplethMapHeight+100],
-  //  ])
-  //  .on("zoom", zoomed);
-  //
-  //// Apply zoom behavior to the SVG element
-  //mapSVG.call(zoom);
-  //
-  //// Function to handle the zoom event
-  //function zoomed(event) {
-  //  d3.selectAll("path.country").attr("transform", event.transform);
-  //}
-  //
-  //mapSVG.on("click", function (event) {
-  //  const isCountryClick = d3.select(event.target).classed("country");
-  //  if (!isCountryClick && !shiftIsPressed) emptyListOfCountries("selection");
-  //});
+  const zoom = d3
+    .zoom()
+    .scaleExtent([1, 8])
+    .translateExtent([
+      [0, 0],
+      [choroplethMapWidth, choroplethMapHeight + 100],
+    ])
+    .on("zoom", zoomed);
+
+  // Apply zoom behavior to the SVG element
+  mapSVG.call(zoom);
+
+  // Function to handle the zoom event
+  function zoomed(event) {
+    d3.selectAll("path.country").attr("transform", event.transform);
+  }
+
+  mapSVG.on("click", function (event) {
+    const isCountryClick = d3.select(event.target).classed("country");
+    if (!isCountryClick && !shiftIsPressed) emptyListOfCountries("selection");
+  });
 
   // setup tooltip
   const tooltip = d3
@@ -278,7 +278,7 @@ function updateSelectedMapCountries() {
   }
 }
 
-function updateBorderCountries() { 
+function updateBorderCountries() {
 
   d3.selectAll("path.country")
     .transition() // add transition for smooth updating
