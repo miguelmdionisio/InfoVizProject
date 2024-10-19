@@ -4,6 +4,17 @@ width height hardcoded
 filter, interaction in general
 */
 function init() {
+
+    const colorScale = d3.scaleOrdinal()
+        .domain(['Northern', 'Southern'])
+        .range([northernCountriesColor, southernCountriesColor]);
+    const swatchesElement = Swatches(colorScale, {
+        columns: 2,
+        swatchSize: 20,
+        format: d => d
+    });
+    document.getElementById('swatches-container').appendChild(swatchesElement);
+
     d3.csv("../data/unemployment.csv")
     .then((data) => {
         unemploymentData = data;
@@ -57,17 +68,6 @@ function init() {
     .then((data) => {
         data = data.filter(dataItem => EUCountryNames.includes(dataItem["Country Name"]));
         createLineChart(data);
-
-        const colorScale = d3.scaleOrdinal()
-            .domain(['Northern', 'Southern'])
-            .range([northernCountriesColor, southernCountriesColor]);
-        const swatchesElement = Swatches(colorScale, {
-            columns: 2,
-            swatchSize: 20,
-            format: d => d
-        });
-        document.getElementById('swatches-container').appendChild(swatchesElement);
-
     });
     createTimeline();
 }
