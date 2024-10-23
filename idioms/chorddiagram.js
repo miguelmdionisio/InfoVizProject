@@ -115,9 +115,12 @@ function createChordDiagram(flowDirection) {
         })
         .attr("dy", ".35em")
         .attr("transform", function(d) {
-            return "rotate(" + (d.angle * 180 / Math.PI - 90) + ") translate(" + (chordDiagramsOuterRadius + 10) + ")" + (d.angle > Math.PI ? "rotate(180)" : "");
+            return "rotate(" + (d.angle * 180 / Math.PI - 90) + ") translate(" + (chordDiagramsOuterRadius + 20) + ")" + (d.angle > Math.PI ? "rotate(180)" : "");
         })
         .attr("text-anchor", function(d) { return d.angle > Math.PI ? "end" : null; })
+        .style("font-size", function(d) {
+            return "12px";
+        })
         .text(d => d.name);
 
     // setup tooltip
@@ -197,7 +200,7 @@ function updateChordDiagrams() {
             .duration(1000)
             .attr("transform", function(d) {
                 d.angle = (d.startAngle + d.endAngle) / 2;
-                return "rotate(" + (d.angle * 180 / Math.PI - 90) + ") translate(" + (chordDiagramsOuterRadius + 10) + ")" + (d.angle > Math.PI ? "rotate(180)" : "");
+                return "rotate(" + (d.angle * 180 / Math.PI - 90) + ") translate(" + (chordDiagramsOuterRadius + 20) + ")" + (d.angle > Math.PI ? "rotate(180)" : "");
             })
             .attr("text-anchor", function(d) { return d.angle > Math.PI ? "end" : null; })
             .text(d => countries[d.index]);

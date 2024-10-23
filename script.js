@@ -38,6 +38,7 @@ function init() {
 
     d3.csv("../data/migration_clean.csv")
     .then((data) => {
+        
         chordDiagramsData = data.filter(dataItem =>
             EUCountryNames.includes(dataItem["Dest Country"]) && EUCountryNames.includes(dataItem["Origin Country"])
         );
@@ -57,6 +58,8 @@ function init() {
 
         createChordDiagram("inflow");
         createChordDiagram("outflow");
+
+        updateChordDiagrams();
     });
 
     d3.csv("../data/economic_events.csv")
