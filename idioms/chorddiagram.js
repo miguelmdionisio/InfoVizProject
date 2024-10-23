@@ -1,4 +1,5 @@
 let countries;
+let updatedMatrix;
 
 function createChordDiagram(flowDirection) {
     const divId = (flowDirection == "inflow") ? "#chordDiagramImmigration" : "#chordDiagramEmigration";
@@ -32,6 +33,7 @@ function createChordDiagram(flowDirection) {
         const destIndex = countries.indexOf(d["Dest Country Code"]);
         matrix[originIndex][destIndex] += (flowDirection == "inflow") ? +d.Inflow : +d.Outflow;
     });
+    updatedMatrix = matrix;
 
     const chord = d3.chord()
         .padAngle(0.05)
@@ -61,11 +63,22 @@ function createChordDiagram(flowDirection) {
             const countryCode = countries[d.index];
             const countryName = countryCodesToNames[countryCode];
             addToListOfCountries(countryName, "hover");
+
+            let flowSum = 0;
+            for (let i = 0; i < countries.length; i++) {
+                flowSum += updatedMatrix[i][d.index];
+            }
+            tooltip
+                .style("opacity", 1)
+                .html(countryName + ": " + flowSum.toLocaleString('de-DE') + ((flowDirection == "inflow") ? " immigrants" : " emigrants")) // update tooltip text
+                .style("left", event.pageX + 5 + "px")
+                .style("top", event.pageY - 28 + "px");
         })
         .on("mouseout", (event, d) => {
             const countryCode = countries[d.index];
             const countryName = countryCodesToNames[countryCode];
             removeFromListOfCountries(countryName, "hover");
+            tooltip.style("opacity", 0);
         })
         .on("mouseup", (event, d) => {
             const countryCode = countries[d.index];
@@ -106,9 +119,19 @@ function createChordDiagram(flowDirection) {
         })
         .attr("text-anchor", function(d) { return d.angle > Math.PI ? "end" : null; })
         .text(d => d.name);
+
+    // setup tooltip
+    const tooltip = d3
+        .select("#chordTooltip")
+        .append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0);
 }
 
 function updateChordDiagrams() {
+    if (!chordDiagramsData) {
+        return;
+    }
 
     const divIds = ["#chordDiagramImmigration", "#chordDiagramEmigration"];
     for (const divId of divIds) {
@@ -126,6 +149,7 @@ function updateChordDiagrams() {
             const destIndex = countries.indexOf(d["Dest Country Code"]);
             matrix[originIndex][destIndex] += (divId == "#chordDiagramImmigration") ? +d.Inflow : +d.Outflow;
         });
+        updatedMatrix = matrix;
 
         const chord = d3.chord()
             .padAngle(0.05)
