@@ -5,13 +5,32 @@ function Swatches(color, {
     swatchSize = 15,
     swatchWidth = swatchSize,
     swatchHeight = swatchSize,
-    marginLeft = 0
+    marginLeft = 0,
+    onClickSwatch = null
 } = {}) {
     const id = `-swatches-${Math.random().toString(16).slice(2)}`;
     const unknown = formatUnknown == null ? undefined : color.unknown();
     const unknowns = unknown == null || unknown === d3.scaleImplicit ? [] : [unknown];
     const domain = color.domain().concat(unknowns);
     if (format === undefined) format = x => x === unknown ? formatUnknown : x;
+
+    let previouslyUnderlined = null;
+
+    function handleClick(labelDiv, value) {
+        if (previouslyUnderlined) {
+            previouslyUnderlined.style.textDecoration = 'none';
+
+            if (previouslyUnderlined == labelDiv) {
+                previouslyUnderlined = null;
+                onClickSwatch(value, true);
+                return;
+            }
+        }
+
+        labelDiv.style.textDecoration = 'underline';
+        previouslyUnderlined = labelDiv;
+        onClickSwatch(value);
+    }
 
     function createSwatchItem(value) {
         const itemDiv = document.createElement('div');
@@ -38,6 +57,8 @@ function Swatches(color, {
         labelDiv.textContent = label;
         labelDiv.title = label;
 
+        itemDiv.addEventListener('click', () => handleClick(labelDiv, value));
+
         itemDiv.appendChild(swatchDiv);
         itemDiv.appendChild(labelDiv);
         return itemDiv;
@@ -55,6 +76,8 @@ function Swatches(color, {
         colorDiv.style.height = `${swatchHeight}px`;
         colorDiv.style.marginRight = '0.5em';
         colorDiv.style.background = color(value);
+
+        span.addEventListener('click', () => handleClick(labelDiv, value));
 
         span.appendChild(colorDiv);
         span.appendChild(document.createTextNode(format(value)));
@@ -75,6 +98,7 @@ function Swatches(color, {
             display: flex;
             align-items: center;
             padding-bottom: 1px;
+            cursor: pointer;
         }
         .${id}-label {
             white-space: nowrap;
@@ -91,6 +115,7 @@ function Swatches(color, {
             display: inline-flex;
             align-items: center;
             margin-right: 1em;
+            cursor: pointer;
         }
     `;
     document.head.appendChild(style);

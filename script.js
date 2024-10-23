@@ -1,8 +1,3 @@
-/*
-TODO:
-width height hardcoded
-filter, interaction in general
-*/
 function init() {
 
     const colorScale = d3.scaleOrdinal()
@@ -11,7 +6,21 @@ function init() {
     const swatchesElement = Swatches(colorScale, {
         columns: 2,
         swatchSize: 20,
-        format: d => d
+        format: d => d,
+        onClickSwatch: (value, deselect = false) => {
+            emptyListOfCountries("selection");
+            if (deselect) {
+                return;
+            }
+
+            if (value == "Southern") {
+                batchAddToListOfCountries(southernCountries, "selection");
+            } else {
+                const northernCountries = EUCountryNames.filter(cn => !southernCountries.includes(cn));
+                batchAddToListOfCountries(northernCountries, "selection");
+            }
+
+        }
     });
     document.getElementById('swatches-container').appendChild(swatchesElement);
 

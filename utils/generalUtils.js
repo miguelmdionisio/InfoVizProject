@@ -5,6 +5,12 @@ function addToListOfCountries(newCountry, listName) { // list = "selection" || "
     }
 }
 
+function batchAddToListOfCountries(newCountries, listName) {
+    const list = (listName == "selection") ? selectedCountries : hoveredCountries;
+    newCountries = newCountries.filter(cn => !countryIsInListOfCountries(cn, listName));
+    list.push(...newCountries);
+}
+
 function removeFromListOfCountries(newCountry, listName) {
     const list = (listName == "selection") ? selectedCountries : hoveredCountries;
     const index = list.indexOf(newCountry);
