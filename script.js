@@ -1,7 +1,7 @@
 function init() {
 
     const colorScale = d3.scaleOrdinal()
-        .domain(['Northern', 'Southern'])
+        .domain(['Northern Countries', 'Southern Countries'])
         .range([northernCountriesColor, southernCountriesColor]);
     const swatchesElement = Swatches(colorScale, {
         columns: 2,
@@ -13,7 +13,7 @@ function init() {
                 return;
             }
 
-            if (value == "Southern") {
+            if (value == "Southern Countries") {
                 batchAddToListOfCountries(southernCountries, "selection");
             } else {
                 const northernCountries = EUCountryNames.filter(cn => !southernCountries.includes(cn));
