@@ -1,5 +1,4 @@
 let countries;
-let updatedMatrix;
 
 function createChordDiagram(flowDirection) {
     const divId = (flowDirection == "inflow") ? "#chordDiagramImmigration" : "#chordDiagramEmigration";
@@ -33,7 +32,6 @@ function createChordDiagram(flowDirection) {
         const destIndex = countries.indexOf(d["Dest Country Code"]);
         matrix[originIndex][destIndex] += (flowDirection == "inflow") ? +d.Inflow : +d.Outflow;
     });
-    updatedMatrix = matrix;
 
     const chord = d3.chord()
         .padAngle(0.05)
@@ -64,13 +62,9 @@ function createChordDiagram(flowDirection) {
             const countryName = countryCodesToNames[countryCode];
             addToListOfCountries(countryName, "hover");
 
-            let flowSum = 0;
-            for (let i = 0; i < countries.length; i++) {
-                flowSum += updatedMatrix[i][d.index];
-            }
             tooltip
                 .style("opacity", 1)
-                .html(countryName + ": " + flowSum.toLocaleString('de-DE') + ((flowDirection == "inflow") ? " immigrants" : " emigrants")) // update tooltip text
+                .html(countryName + ": " + d["value"].toLocaleString('de-DE') + ((flowDirection == "inflow") ? " immigrants" : " emigrants")) // update tooltip text
                 .style("left", event.pageX + 5 + "px")
                 .style("top", event.pageY - 28 + "px");
         })
@@ -152,7 +146,6 @@ function updateChordDiagrams() {
             const destIndex = countries.indexOf(d["Dest Country Code"]);
             matrix[originIndex][destIndex] += (divId == "#chordDiagramImmigration") ? +d.Inflow : +d.Outflow;
         });
-        updatedMatrix = matrix;
 
         const chord = d3.chord()
             .padAngle(0.05)
