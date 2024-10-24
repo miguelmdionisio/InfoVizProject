@@ -74,6 +74,7 @@ function init() {
     d3.csv("../data/economic_events.csv")
     .then((data) => {
         createGanttChart(data);
+        createTimeline();
     });
 
     d3.csv("../data/gdp_clean.csv")
@@ -81,7 +82,6 @@ function init() {
         data = data.filter(dataItem => EUCountryNames.includes(dataItem["Country Name"]));
         createLineChart(data);
     });
-    createTimeline();
 }
 
 document.addEventListener('keydown', (event) => {
@@ -94,4 +94,8 @@ document.addEventListener('keyup', (event) => {
     if (event.key === 'Shift') {
         shiftIsPressed = false;
     }
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    loaded = true;
 });
