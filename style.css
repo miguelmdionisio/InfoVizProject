@@ -134,3 +134,7 @@ button {
     stroke: var(--mapCountrySelectColor);
     stroke-width: 3px;
 }
+
+* {
+    user-select: none;
+}
