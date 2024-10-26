@@ -305,7 +305,7 @@ function updateHoveredLines() {
         } else if (hoveredCountries.length == 0 && selectedCountries.length == 0) {
             d3.select(node).style("opacity", "1.0");
         } else {
-            d3.select(node).style("opacity", "0.1"); // (selectedCountries.length == 0) ? "1.0" : 
+            d3.select(node).style("opacity", "0.1");
         }
     }
 }
