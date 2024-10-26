@@ -151,7 +151,6 @@ function createLineChart(data) {
             } else tooltip.style("opacity", 0);
         })
         .on("click", function (event, d) {
-            console.log("here");
             dismissBrush();
             if (!shiftIsPressed) {
                 emptyListOfCountries("selection");

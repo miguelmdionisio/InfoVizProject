@@ -1,3 +1,5 @@
+let ganttSVG;
+
 function createGanttChart(data) {
 
     const margin = { top: 0, right: 20, bottom: 0, left: 20 };
@@ -22,14 +24,14 @@ function createGanttChart(data) {
         events.push(event);
     }
 
-    const svg = d3.select("#ganttchart")
+    ganttSVG = d3.select("#ganttchart")
         .append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
         .attr("transform", `translate(${margin.left * 4}, ${margin.top})`);
 
-    svg.append("rect")
+    ganttSVG.append("rect")
         .attr("width", width)
         .attr("height", height)
         .attr("fill", "transparent")
@@ -54,7 +56,7 @@ function createGanttChart(data) {
         .range([0, height])
         .padding(0.5);
 
-    svg.selectAll(".bar")
+    ganttSVG.selectAll(".bar")
         .data(events)
         .enter()
         .append("rect")
@@ -118,7 +120,7 @@ function createGanttChart(data) {
             // });
         });
 
-    svg.selectAll(".bar-text")
+    ganttSVG.selectAll(".bar-text")
         .data(events)
         .enter()
         .append("text")
@@ -128,16 +130,15 @@ function createGanttChart(data) {
         .attr("y", d => rowScale(d.row) - 3)  // Adjust the y position if necessary
         .attr("font-size", 14)
         .text(d => d.name);
+}
 
-    function updateBarSelectionColors() {
-        svg.selectAll(".ganttbar")
+function updateBarSelectionColors() {
+    ganttSVG.selectAll(".ganttbar")
         .transition()
         .duration(200)
         .style("fill", function(d) {
             return d.selected ? highlightedEventsColor : eventsColor;
         });
-    }
-
 }
 
 function updateSlidersBasedOnEventSelection() {
@@ -161,6 +162,15 @@ function updateSlidersBasedOnEventSelection() {
     updateHighlight();
     updateChordDiagrams();
     updateChoroplethMap();
+}
+
+function updateEventsBasedOnSliderMovement() {
+    events.forEach(e => {
+        if (e.startDate.getFullYear() == timelineStartYear.getFullYear()
+            && e.endDate.getFullYear() == timelineEndYear.getFullYear()) {e.selected = true;}
+        else e.selected = false;
+    });
+    updateBarSelectionColors();
 }
 
 function deselectAllEvents() {

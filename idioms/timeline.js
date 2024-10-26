@@ -98,6 +98,7 @@ function createTimeline() {
             updateRangeLine(timelineStartYear, timelineEndYear);
             updateChordDiagrams();
             updateChoroplethMap();
+            updateEventsBasedOnSliderMovement();
         })
     );
       
