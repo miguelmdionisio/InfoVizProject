@@ -1,3 +1,5 @@
+let previouslyUnderlinedSwatch = null;
+
 function Swatches(color, {
     columns = null,
     format,
@@ -14,23 +16,7 @@ function Swatches(color, {
     const domain = color.domain().concat(unknowns);
     if (format === undefined) format = x => x === unknown ? formatUnknown : x;
 
-    let previouslyUnderlined = null;
-
-    function handleClick(labelDiv, value) {
-        if (previouslyUnderlined) {
-            previouslyUnderlined.style.textDecoration = 'none';
-
-            if (previouslyUnderlined == labelDiv) {
-                previouslyUnderlined = null;
-                onClickSwatch(value, true);
-                return;
-            }
-        }
-
-        labelDiv.style.textDecoration = 'underline';
-        previouslyUnderlined = labelDiv;
-        onClickSwatch(value);
-    }
+    previouslyUnderlinedSwatch = null;
 
     function createSwatchItem(value) {
         const itemDiv = document.createElement('div');
@@ -57,7 +43,7 @@ function Swatches(color, {
         labelDiv.textContent = label;
         labelDiv.title = label;
 
-        itemDiv.addEventListener('click', () => handleClick(labelDiv, value));
+        itemDiv.addEventListener('click', () => handleClick(labelDiv, value, onClickSwatch));
 
         itemDiv.appendChild(swatchDiv);
         itemDiv.appendChild(labelDiv);
@@ -77,7 +63,7 @@ function Swatches(color, {
         colorDiv.style.marginRight = '0.5em';
         colorDiv.style.background = color(value);
 
-        span.addEventListener('click', () => handleClick(labelDiv, value));
+        span.addEventListener('click', () => handleClick(labelDiv, value, onClickSwatch));
 
         span.appendChild(colorDiv);
         span.appendChild(document.createTextNode(format(value)));
@@ -139,4 +125,26 @@ function Swatches(color, {
     }
 
     return container;
+}
+
+function handleClick(labelDiv, value, callback) {
+    if (previouslyUnderlinedSwatch) {
+        previouslyUnderlinedSwatch.style.textDecoration = 'none';
+
+        if (previouslyUnderlinedSwatch == labelDiv) {
+            previouslyUnderlinedSwatch = null;
+            callback(value, true);
+            return;
+        }
+    }
+
+    labelDiv.style.textDecoration = 'underline';
+    previouslyUnderlinedSwatch = labelDiv;
+    callback(value);
+}
+
+function clearLegend() {
+    if (previouslyUnderlinedSwatch) {
+        previouslyUnderlinedSwatch.style.textDecoration = 'none';
+    }
 }

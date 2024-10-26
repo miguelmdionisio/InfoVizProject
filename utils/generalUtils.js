@@ -25,8 +25,8 @@ function countryIsInListOfCountries(country, listName) {
 }
 
 function emptyListOfCountries(listName) {
-    if (listName == "selection") selectedCountries.splice(0, selectedCountries.length);
-    else hoveredCountries.splice(0, hoveredCountries.length);
+    const list = (listName == "selection") ? selectedCountries : hoveredCountries;
+    list.splice(0, list.length);
 }
 
 function createObservableArray(initialArray, callback) {
@@ -73,4 +73,8 @@ const onSelectChange = (arr) => {
     updateSelectedLines();
     updateSelectedMapCountries();
     updateSelectedArcs();
+
+    if (selectedCountries.length == 0) {
+        clearLegend();
+    }
 };
