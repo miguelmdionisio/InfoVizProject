@@ -1,11 +1,21 @@
 let countries;
+let immigrationSVG, emigrationSVG;
 
-function createChordDiagram(flowDirection) {
+function createChordDiagram(flowDirection, startInvisible = false) {
     const divId = (flowDirection == "inflow") ? "#chordDiagramImmigration" : "#chordDiagramEmigration";
     const globalVarsId = +(flowDirection != "inflow");
 
+    oldKeys = new Set();
+    newKeys = new Set();
+
+    if (startInvisible) {
+        d3.select(divId)
+            .style("opacity", 0);
+    }
+
     const svg = d3.select(divId)
         .append("svg")
+        .attr("id", (flowDirection == "inflow") ? "immigrationSVG" : "emigrationSVG")
         .attr("width", chordDiagramWidth)
         .attr("height", chordDiagramHeight)
         .append("g")
@@ -21,10 +31,15 @@ function createChordDiagram(flowDirection) {
             if (!shiftIsPressed) emptyListOfCountries("selection");
         });
 
-    const filteredData = chordDiagramsData.filter(d => {
+    const originalData = JSON.parse(JSON.stringify(chordDiagramsData)); // deep copy
+
+    if (!timelineStartYear || !timelineEndYear) {
+        timelineStartYear = new Date(minYear, 1, 1);
+        timelineEndYear = new Date(maxYear, 1, 1);
+    }
+    const filteredData = originalData.filter(d => {
         return +d.Year >= timelineStartYear.getFullYear() && +d.Year <= timelineEndYear.getFullYear()
     });
-    
     countries = Array.from(new Set(filteredData.map(d => d["Origin Country Code"]).concat(filteredData.map(d => d["Dest Country Code"]))));
     const matrix = Array.from({ length: countries.length }, () => Array(countries.length).fill(0));
     filteredData.forEach(d => {
@@ -84,10 +99,11 @@ function createChordDiagram(flowDirection) {
             }
         });
 
-    chordDiagramsRibbons[globalVarsId] = svg.append("g")
+    chordDiagramsRibbons[globalVarsId] = svg
+        .append("g")
         .attr("fill-opacity", 0.5)
         .selectAll("path")
-        .data(chords)
+        .data(chords, d => `${d.source.index}-${d.target.index}`)
         .enter().append("path")
         .attr("d", d3.ribbon().radius(chordDiagramsInnerRadius))
         .style("fill", d => {
@@ -123,6 +139,11 @@ function createChordDiagram(flowDirection) {
         .append("div")
         .attr("class", "tooltip")
         .style("opacity", 0);
+
+    if (flowDirection == "inflow") immigrationSVG = svg;
+    else emigrationSVG = svg;
+
+    return svg;
 }
 
 function updateChordDiagrams() {
@@ -132,73 +153,23 @@ function updateChordDiagrams() {
 
     const divIds = ["#chordDiagramImmigration", "#chordDiagramEmigration"];
     for (const divId of divIds) {
-        const diagram = d3.select(divId);
-        const globalVarsId = +(divId != "#chordDiagramImmigration");
-
-        // recompute data shown in diagram
-        const filteredData = chordDiagramsData.filter(d => {
-            return +d.Year >= timelineStartYear.getFullYear() && +d.Year <= timelineEndYear.getFullYear()
-        });
-        countries = Array.from(new Set(filteredData.map(d => d["Origin Country Code"]).concat(filteredData.map(d => d["Dest Country Code"]))));
-        const matrix = Array.from({ length: countries.length }, () => Array(countries.length).fill(0));
-        filteredData.forEach(d => {
-            const originIndex = countries.indexOf(d["Origin Country Code"]);
-            const destIndex = countries.indexOf(d["Dest Country Code"]);
-            matrix[originIndex][destIndex] += (divId == "#chordDiagramImmigration") ? +d.Inflow : +d.Outflow;
-        });
-
-        const chord = d3.chord()
-            .padAngle(0.05)
-            .sortSubgroups(d3.descending);
-
-        const chords = chord(matrix);
-
-        const arc = d3.arc()
-            .innerRadius(chordDiagramsInnerRadius)
-            .outerRadius(chordDiagramsOuterRadius);
-
-        const ribbon = d3.ribbon().radius(chordDiagramsInnerRadius);
-
-        // animate arcs
-        chordDiagramsArcs[globalVarsId]
-            .data(chords.groups, d => d.index)
+        let diagram = d3.select(divId);
+        diagram
+            .selectAll("*")
             .transition()
-            .duration(1000)
-            .attrTween("d", function(d) {
-                const interpolate = d3.interpolate(this._current, d);
-                this._current = interpolate(1);
-                return t => arc(interpolate(t));
+            .duration(250)
+            .style("opacity", 0)
+            .remove()
+            .end()
+            .then(function() {
+                d3.select(this).remove();
+                const flowDirection = (divId == "#chordDiagramImmigration") ? "inflow" : "outflow";
+                createChordDiagram(flowDirection, true);
+                diagram = d3.select(divId);
+                diagram.transition()
+                    .duration(250)
+                    .style("opacity", 1);
             });
-
-        // animate ribbons
-        chordDiagramsRibbons[globalVarsId]
-            .data(chords, (d, i) => `${i}`)
-            .transition()
-            .duration(1000)
-            .attrTween("d", function(d) {
-                const interpolate = d3.interpolate(this._current, d);
-                this._current = interpolate(1);
-                return t => ribbon(interpolate(t));
-            });
-
-        // animate labels
-        const labels = diagram.selectAll("text")
-            .data(chords.groups, d => d.index);
-
-        labels.enter()
-            .append("text")
-            .attr("dy", ".35em")
-            .merge(labels)
-            .transition()
-            .duration(1000)
-            .attr("transform", function(d) {
-                d.angle = (d.startAngle + d.endAngle) / 2;
-                return "rotate(" + (d.angle * 180 / Math.PI - 90) + ") translate(" + (chordDiagramsOuterRadius + 20) + ")" + (d.angle > Math.PI ? "rotate(180)" : "");
-            })
-            .attr("text-anchor", function(d) { return d.angle > Math.PI ? "end" : null; })
-            .text(d => countries[d.index]);
-
-        labels.exit().remove();
     }
 }
 

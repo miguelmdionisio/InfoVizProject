@@ -284,8 +284,7 @@ function createLineChart(data) {
 
     createYaxisControl(); 
     updateHighlight();
-    updateChordDiagrams();
-    updateChoroplethMap();
+
 }
 
 function updateHoveredLines() {

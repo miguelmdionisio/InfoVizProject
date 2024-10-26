@@ -161,6 +161,7 @@ function updateSlidersBasedOnEventSelection() {
     updateHighlight();
     updateChordDiagrams();
     updateChoroplethMap();
+
 }
 
 function deselectAllEvents() {

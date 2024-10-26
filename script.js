@@ -45,6 +45,18 @@ function init() {
         });
     });
 
+    d3.csv("../data/economic_events.csv")
+    .then((data) => {
+        createGanttChart(data);
+        createTimeline();
+    
+        d3.csv("../data/gdp_clean.csv")
+            .then((data) => {
+                data = data.filter(dataItem => EUCountryNames.includes(dataItem["Country Name"]));
+                createLineChart(data);
+            });
+    });
+
     d3.csv("../data/migration_clean.csv")
     .then((data) => {
         
@@ -67,21 +79,8 @@ function init() {
 
         createChordDiagram("inflow");
         createChordDiagram("outflow");
-
-        updateChordDiagrams();
     });
 
-    d3.csv("../data/economic_events.csv")
-    .then((data) => {
-        createGanttChart(data);
-        createTimeline();
-    });
-
-    d3.csv("../data/gdp_clean.csv")
-    .then((data) => {
-        data = data.filter(dataItem => EUCountryNames.includes(dataItem["Country Name"]));
-        createLineChart(data);
-    });
 }
 
 document.addEventListener('keydown', (event) => {
