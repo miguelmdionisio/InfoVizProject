@@ -144,7 +144,19 @@ function handleClick(labelDiv, value, callback) {
 }
 
 function clearLegend() {
-    if (previouslyUnderlinedSwatch) {
-        previouslyUnderlinedSwatch.style.textDecoration = 'none';
+    const elementSouth = document.querySelector(`[title="Southern Countries"]`);
+    const elementNorth = document.querySelector(`[title="Northern Countries"]`);
+    if (elementSouth) {
+        elementSouth.style.textDecoration = "none";
+    }
+    if (elementNorth) {
+        elementNorth.style.textDecoration = "none";
+    }
+}
+
+function changeSwatchSelection(name, select = true) {
+    const element = document.querySelector(`[title="${name}"]`);
+    if (element) {
+        element.style.textDecoration = select ? "underline" : "none";
     }
 }

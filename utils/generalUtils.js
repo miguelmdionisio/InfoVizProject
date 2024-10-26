@@ -74,7 +74,18 @@ const onSelectChange = (arr) => {
     updateSelectedMapCountries();
     updateSelectedArcs();
 
-    if (selectedCountries.length == 0) {
+    const selectionIsSouthernCountries = haveSameElements(arr, southernCountries);
+    const selectionIsNorthernCountries = haveSameElements(arr, northernCountries);
+
+    if (selectedCountries.length == 0 || (!selectionIsSouthernCountries && !selectionIsNorthernCountries)) {
         clearLegend();
+    } else {
+        const selection = selectionIsSouthernCountries ? "Southern Countries" : "Northern Countries";
+        changeSwatchSelection(selection, true);
     }
 };
+
+const haveSameElements = (arr1, arr2) =>
+    arr1.length === arr2.length &&
+    arr1.every(element => arr2.includes(element)) &&
+    arr2.every(element => arr1.includes(element));

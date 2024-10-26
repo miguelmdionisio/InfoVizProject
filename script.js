@@ -28,6 +28,10 @@ function init() {
     .then((data) => {
         unemploymentData = data;
         EUCountryNames = data.map((dataPoint) => dataPoint.Country);
+        const index = EUCountryNames.indexOf("Netherlands");
+        if (index !== -1) EUCountryNames.splice(index, 1);
+
+        northernCountries = EUCountryNames.filter(name => !southernCountries.includes(name));
 
         d3.json("../data/europe.geojson").then(function(geojson) {
             // const countries = data.map((dataPoint) => dataPoint.Country);
