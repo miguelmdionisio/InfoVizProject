@@ -214,42 +214,19 @@ function createLineChart(data) {
             .attr("r", 8)
             .attr("fill", timelineRangeLineColor);
 
-        // const tooltip = d3.select("#tooltip")
-        //     .append("div")
-        //     .attr("class", "tooltip")
-        //     .style("opacity", 0);
-
         minSlider.call(d3.drag()
             .on("drag", function (event) {
-                const newY = Math.min(yControlScale.range()[0], Math.max(event.y, yControlScale.range()[1]));
+                const newY = Math.min(yControlScale.range()[0], Math.max(maxSlider.attr("cy") + 15, event.y, yControlScale.range()[1]));
                 d3.select(this).attr("cy", newY);
                 updateYAxisFromSliders();
-
-                // const sliderBounds = minSlider.node().getBoundingClientRect();
-                // tooltip.html(`${(yControlScale.invert(newY) / 1e9).toFixed(0)}B`)
-                //     .style("left", `${sliderBounds.left + window.scrollX + 10}px`)
-                //     .style("top", `${sliderBounds.top + window.scrollY - 30}px`)
-                //     .style("opacity", 1);
-            })
-            .on("end", function () {
-                // tooltip.style("opacity", 0);
             })
         );
         
         maxSlider.call(d3.drag()
             .on("drag", function (event) {
-                const newY = Math.min(yControlScale.range()[0], Math.max(event.y, yControlScale.range()[1]));
+                const newY = Math.min(minSlider.attr("cy") - 15, yControlScale.range()[0], Math.max(event.y, yControlScale.range()[1])); // minSlider.attr("cy") - 25,
                 d3.select(this).attr("cy", newY);
                 updateYAxisFromSliders();
-
-                // const sliderBounds = maxSlider.node().getBoundingClientRect();
-                // tooltip.html(`${(yControlScale.invert(newY) / 1e9).toFixed(0)}B`)
-                //     .style("left", `${sliderBounds.left + window.scrollX + 10}px`)
-                //     .style("top", `${sliderBounds.top + window.scrollY - 30}px`)
-                //     .style("opacity", 1);
-            })
-            .on("end", function () {
-                // tooltip.style("opacity", 0);
             })
         );
 
