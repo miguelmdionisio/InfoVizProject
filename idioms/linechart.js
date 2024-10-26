@@ -294,12 +294,18 @@ function updateHoveredLines() {
         const countryName = countryData.name;
 
         d3.select(node).style("stroke-width", "1.5px");
+        d3.select(node).style("opacity", "1.0");
 
         if (countryIsInListOfCountries(countryName, "hover")) {
             d3.select(node).style("cursor", "pointer").style("stroke-width", 3);
             d3.select(node).style("opacity", "1.0");
-        } else if ((selectedCountries.length != 0) && !countryIsInListOfCountries(countryName, "selection")) {
-            d3.select(node).style("opacity", "0.1");
+        } else if (countryIsInListOfCountries(countryName, "selection")) {
+            d3.select(node).style("cursor", "pointer").style("stroke-width", 1.5);
+            d3.select(node).style("opacity", "1.0");
+        } else if (hoveredCountries.length == 0 && selectedCountries.length == 0) {
+            d3.select(node).style("opacity", "1.0");
+        } else {
+            d3.select(node).style("opacity", "0.1"); // (selectedCountries.length == 0) ? "1.0" : 
         }
     }
 }
