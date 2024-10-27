@@ -168,12 +168,20 @@ function updateChordDiagrams() {
                 diagram = d3.select(divId);
                 diagram.transition()
                     .duration(250)
-                    .style("opacity", 1);
+                    .style("opacity", 1)
+                    .end()
+                    .then(function() {
+                        updateSelectedArcs();
+                    });
             });
     }
 }
 
 function updateHoveredArcs() {
+    if (!immigrationSVG || !emigrationSVG) {
+        return;
+    }
+
     if (hoveredCountries.length == 0 && (selectedCountries.length == 0)) {
         for (let i = 0; i < chordDiagramsArcs.length; i++) {
             const listOfChords = chordDiagramsArcs[i];
@@ -242,6 +250,10 @@ function updateHoveredArcs() {
 }
 
 function updateSelectedArcs() {
+    if (!immigrationSVG || !emigrationSVG) {
+        return;
+    }
+
     const hoveredIndexes = hoveredCountries.map(hc => {
         const hcCode = countryNamesToCodes[hc];
         return countries.indexOf(hcCode);

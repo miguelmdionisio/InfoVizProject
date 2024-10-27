@@ -50,7 +50,7 @@ function init() {
     .then((data) => {
         createGanttChart(data);
         createTimeline();
-    
+
         d3.csv("../data/gdp_clean.csv")
             .then((data) => {
                 data = data.filter(dataItem => EUCountryNames.includes(dataItem["Country Name"]));
